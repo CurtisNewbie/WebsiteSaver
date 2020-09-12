@@ -21,7 +21,7 @@ public class PdfUtilImplTest {
     private PdfUtil pdfUtil;
 
     @Test
-    public void shouldConvertToPdfFile() throws IOException {
+    public void shouldConvertToPdfFile() {
         // conversion success
         Assertions.assertTrue(pdfUtil.toPdfFile(HTML_CONTENT, PDF_PATH));
         // pdf generated
