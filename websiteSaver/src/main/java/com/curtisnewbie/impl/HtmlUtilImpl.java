@@ -31,7 +31,7 @@ public class HtmlUtilImpl implements HtmlUtil {
             urlConn = (HttpURLConnection) new URL(url).openConnection();
             urlConn.setConnectTimeout(TIMEOUT);
             urlConn.connect();
-            if (!urlConn.getContentType().matches(HTML_TEXT_TYPE_PAT)){
+            if (!urlConn.getContentType().matches(HTML_TEXT_TYPE_PAT)) {
                 logger.error("Error. Incorrect HTTP URL Content: {}", urlConn.getContentType());
                 throw new HtmlContentIncorrectException();
             }
