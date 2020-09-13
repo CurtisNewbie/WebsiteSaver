@@ -4,6 +4,9 @@ import com.curtisnewbie.api.PdfUtil;
 import com.curtisnewbie.api.UrlUtil;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.html2pdf.attach.impl.OutlineHandler;
+import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
+import com.itextpdf.styledxmlparser.css.media.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +59,7 @@ public class PdfUtilImpl implements PdfUtil {
             }
             ConverterProperties props = new ConverterProperties();
             props.setBaseUri(baseUrl);
+            props.setMediaDeviceDescription(new MediaDeviceDescription(MediaType.PRINT));
             logger.info(">>> Start PDF conversion...");
             HtmlConverter.convertToPdf(htmlContent, new FileOutputStream(path), props);
         } catch (Exception e) {

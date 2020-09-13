@@ -1,6 +1,7 @@
 package com.curtisnewbie.api;
 
 import com.curtisnewbie.impl.HtmlContentIncorrectException;
+import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.List;
