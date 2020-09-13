@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 
 /**
  * @author zhuangyongj
@@ -33,14 +32,12 @@ public class HtmlDownloadController {
     private PdfUtil pdfUtil;
 
     @GetMapping
-    public ResponseEntity fetchAndConvert2Pdf(@RequestHeader("url") String url,
-                                              @RequestHeader("target") String target) {
-        doFetchAndConvert2Pdf(url, target);
-        return ResponseEntity.ok().build();
+    public void fetchAndConvert2Pdf(@RequestHeader("url") String url, @RequestHeader("target") String target) {
+        doAsyncFetchAndConvert2Pdf(url, target);
     }
 
     @Async
-    private void doFetchAndConvert2Pdf(String url, String target) {
+    private void doAsyncFetchAndConvert2Pdf(String url, String target) {
         logger.info(">>> Request fetching and converting webpage {} to pdf {}", url, target);
         try {
             String ctn = htmlUtil.grabHtmlContent(url);

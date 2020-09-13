@@ -66,13 +66,13 @@ public class HtmlUtilImpl implements HtmlUtil {
             if (e.hasAttr(REL_ATTR) && e.attr(REL_ATTR).equalsIgnoreCase(REL_NAME) && e.hasAttr(HREF_ATTR))
                 cssLinks.add(e.attr(HREF_ATTR));
         });
-        logger.info("Extracted css links: {}", cssLinks.toString());
+        logger.info(">>> Extracted css links: {}", cssLinks.toString());
         return cssLinks;
     }
 
     @Override
     public String extractBaseUrl(String htmlContent) {
-        logger.info("Trying to extract base url from html content");
+        logger.info(">>> Trying to extract base url from html content");
         Document doc = Jsoup.parse(htmlContent);
         List<Element> baseTags = doc.getElementsByTag(BASE_TAG);
         if (baseTags.isEmpty())
@@ -80,7 +80,7 @@ public class HtmlUtilImpl implements HtmlUtil {
         for (Element b : baseTags) {
             if (b.hasAttr(HREF_ATTR)){
                 String base = b.attr(HREF_ATTR);
-                logger.info("Extracted base url: {}", base);
+                logger.info(">>> Extracted base url: {}", base);
                 return base;
             }
         }
