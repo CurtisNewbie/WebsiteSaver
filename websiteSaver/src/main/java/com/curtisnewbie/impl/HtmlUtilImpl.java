@@ -36,17 +36,19 @@ public class HtmlUtilImpl implements HtmlUtil {
 
     @Override
     public String grabHtmlContent(String url) throws IOException, HtmlContentIncorrectException {
+        logger.info(">>> Trying to grab html content of {}", url);
         HttpURLConnection urlConn = null;
         try {
             urlConn = (HttpURLConnection) new URL(url).openConnection();
             urlConn.setConnectTimeout(TIMEOUT);
             urlConn.connect();
             if (!urlConn.getContentType().matches(HTML_TEXT_TYPE_PAT)) {
-                logger.error("Error. Incorrect HTTP URL Content: {}", urlConn.getContentType());
+                logger.error(">>> Error. Incorrect HTTP URL Content: {}", urlConn.getContentType());
                 throw new HtmlContentIncorrectException(urlConn.getContentType());
             }
             try (BufferedInputStream bufferedIn = new BufferedInputStream(urlConn.getInputStream())) {
                 byte[] bytes = bufferedIn.readAllBytes();
+                logger.info(">>> Finish grabbing html content of {}", url);
                 return new String(bytes, ENCODING);
             }
         } finally {
@@ -70,13 +72,17 @@ public class HtmlUtilImpl implements HtmlUtil {
 
     @Override
     public String extractBaseUrl(String htmlContent) {
+        logger.info("Trying to extract base url from html content");
         Document doc = Jsoup.parse(htmlContent);
         List<Element> baseTags = doc.getElementsByTag(BASE_TAG);
         if (baseTags.isEmpty())
             return null;
         for (Element b : baseTags) {
-            if (b.hasAttr(HREF_ATTR))
-                return b.attr(HREF_ATTR);
+            if (b.hasAttr(HREF_ATTR)){
+                String base = b.attr(HREF_ATTR);
+                logger.info("Extracted base url: {}", base);
+                return base;
+            }
         }
         return null;
     }
