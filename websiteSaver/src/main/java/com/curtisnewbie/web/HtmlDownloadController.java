@@ -33,6 +33,7 @@ public class HtmlDownloadController {
     @GetMapping
     public ResponseEntity fetchAndConvert2Pdf(@RequestHeader("url") String url,
                                               @RequestHeader("target") String target) {
+        logger.info(">>> Request fetching and converting webpage {} to pdf {}", url, target);
         try {
             String ctn = htmlUtil.grabHtmlContent(url);
             String baseUrl = htmlUtil.extractBaseUrl(ctn); // check if a base url is declared
@@ -46,6 +47,7 @@ public class HtmlDownloadController {
             logger.error("Failed to fetch html content. Error Msg: {}", e);
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
+        logger.info(">>> Finish fetching and converting webpage {} to pdf {}", url, target);
         return ResponseEntity.ok().build();
     }
 }
