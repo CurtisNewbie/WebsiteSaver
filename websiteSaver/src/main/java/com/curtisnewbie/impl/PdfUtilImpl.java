@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author zhuangyongj
@@ -44,7 +42,7 @@ public class PdfUtilImpl implements PdfUtil {
     }
 
     @Override
-    public boolean toPdfFile(String htmlContent, String url, String path) {
+    public boolean toPdfFile(String htmlContent, String baseUrl, String path) {
         try {
             Path p = Path.of(path);
             if (Files.isDirectory(p))  // is a dir
@@ -52,9 +50,8 @@ public class PdfUtilImpl implements PdfUtil {
             Path parent = p.getParent();
             if (!Files.exists(parent)) // create dir if not exists
                 Files.createDirectory(parent);
-            // TODO: Crawl all .css, img files
             ConverterProperties props = new ConverterProperties();
-            props.setBaseUri(urlUtil.parseBaseUrl(url));
+            props.setBaseUri(baseUrl);
             HtmlConverter.convertToPdf(htmlContent, new FileOutputStream(path), props);
         } catch (Exception e) {
             logger.error("Failed to convert html content to pdf file. Error Msg: {}", e.getMessage());

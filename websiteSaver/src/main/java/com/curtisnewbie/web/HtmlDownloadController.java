@@ -35,7 +35,10 @@ public class HtmlDownloadController {
                                               @RequestHeader("target") String target) {
         try {
             String ctn = htmlUtil.grabHtmlContent(url);
-            if (!pdfUtil.toPdfFile(ctn, target)) {
+            String baseUrl = htmlUtil.extractBaseUrl(ctn); // check if a base url is declared
+            if (baseUrl == null)
+                baseUrl = url;
+            if (!pdfUtil.toPdfFile(ctn, baseUrl, target)) {
                 logger.error("Failed to convert to pdf");
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }

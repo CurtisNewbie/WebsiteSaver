@@ -6,4 +6,12 @@ package com.curtisnewbie.impl;
  * @author zhuangyongj
  */
 public class HtmlContentIncorrectException extends Exception {
+
+    public HtmlContentIncorrectException() {
+    }
+
+    public HtmlContentIncorrectException(String msg) {
+        super(msg);
+    }
 }
+
