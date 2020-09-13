@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
+/**
+ * @author zhuangyongj
+ */
 @RestController
 @RequestMapping("/download")
 public class HtmlDownloadController {
@@ -28,7 +31,8 @@ public class HtmlDownloadController {
     private PdfUtil pdfUtil;
 
     @GetMapping
-    public ResponseEntity fetchAndConvert2Pdf(@RequestHeader("url") String url, @RequestHeader("target") String target) {
+    public ResponseEntity fetchAndConvert2Pdf(@RequestHeader("url") String url,
+                                              @RequestHeader("target") String target) {
         try {
             String ctn = htmlUtil.grabHtmlContent(url);
             if (!pdfUtil.toPdfFile(ctn, target)) {
