@@ -1,8 +1,5 @@
 package com.curtisnewbie.api;
 
-import java.util.Optional;
-import java.util.concurrent.Future;
-
 /**
  * <p>
  * A handler for {@link Task}
@@ -13,9 +10,7 @@ import java.util.concurrent.Future;
 public interface TaskHandler {
 
     /**
-     * Handle {@code Task}  of generic type {@code T} without the ability to get the completed result
-     *
-     * @param <T> type of result
+     * Handle {@code Task} without the ability to get the completed result
      */
-    <T> void handle(Task<T> t);
+   void asyncHandle(Task<?> t);
 }

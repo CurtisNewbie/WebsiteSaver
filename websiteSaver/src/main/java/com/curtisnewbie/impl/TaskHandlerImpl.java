@@ -19,7 +19,7 @@ public class TaskHandlerImpl implements TaskHandler {
 
     @Async
     @Override
-    public <T> void handle(Task<T> t) {
+    public void asyncHandle(Task<?> t) {
         try {
             logger.info(">>> Handling Job");
             t.completeJob();
