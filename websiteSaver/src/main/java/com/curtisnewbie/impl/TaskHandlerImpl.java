@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Implementation of {@code TaskHandler}
+ *
+ * @author zhuangyongj
  */
 @Component
 public class TaskHandlerImpl implements TaskHandler {
