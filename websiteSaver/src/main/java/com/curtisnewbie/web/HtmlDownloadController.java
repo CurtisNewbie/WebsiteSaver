@@ -2,6 +2,8 @@ package com.curtisnewbie.web;
 
 import com.curtisnewbie.api.HtmlUtil;
 import com.curtisnewbie.api.PdfUtil;
+import com.curtisnewbie.api.Task;
+import com.curtisnewbie.api.TaskHandler;
 import com.curtisnewbie.impl.HtmlContentIncorrectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,14 +34,19 @@ public class HtmlDownloadController {
     @Autowired
     private PdfUtil pdfUtil;
 
+    @Autowired
+    private TaskHandler taskHandler;
+
     @GetMapping
     public ResponseEntity fetchAndConvert2Pdf(@RequestHeader("url") String url,
                                               @RequestHeader("target") String target) {
-        doAsyncFetchAndConvert2Pdf(url, target);
+        taskHandler.handle(() -> {
+            doAsyncFetchAndConvert2Pdf(url, target);
+            return null;
+        });
         return ResponseEntity.ok().build();
     }
 
-    @Async
     private void doAsyncFetchAndConvert2Pdf(String url, String target) {
         logger.info(">>> Request fetching and converting webpage {} to pdf {}", url, target);
         try {
