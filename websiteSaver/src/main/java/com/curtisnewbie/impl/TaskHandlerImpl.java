@@ -1,7 +1,8 @@
 package com.curtisnewbie.impl;
 
-import com.curtisnewbie.api.Task;
+import com.curtisnewbie.api.TaskWithResult;
 import com.curtisnewbie.api.TaskHandler;
+import com.curtisnewbie.api.TaskWithoutResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -19,7 +20,7 @@ public class TaskHandlerImpl implements TaskHandler {
 
     @Async
     @Override
-    public void asyncHandle(Task<?> t) {
+    public void asyncHandle(TaskWithoutResult t) {
         try {
             logger.info(">>> Handling Job");
             t.completeJob();

@@ -1,20 +1,17 @@
 package com.curtisnewbie.api;
 
-import java.util.Optional;
-
 /**
- * A Task that returns result of {@code T} generic type
+ * Task without the need to return result
  *
- * @param <T>
  * @author zhuangyongj
  */
 @FunctionalInterface
-public interface Task<T> {
+public interface TaskWithoutResult {
 
     /**
      * The job that this task will accomplish
+     *
      * @return
      */
-    T completeJob();
-
+    void completeJob();
 }
