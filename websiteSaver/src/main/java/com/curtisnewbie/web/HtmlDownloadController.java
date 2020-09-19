@@ -13,7 +13,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @author zhuangyongj
@@ -38,11 +43,57 @@ public class HtmlDownloadController {
                                               @RequestHeader("target") String target) {
         taskHandler.asyncHandle(() -> {
             fetchAndConvert2pdf(url, target);
-            return null;
         });
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/with/chrome")
+    public ResponseEntity convertWithChrome(@RequestHeader("url") String url, @RequestHeader("target") String target) {
+        taskHandler.asyncHandle(() -> {
+            grabWithChrome(url, target);
+        });
+        return ResponseEntity.ok().build();
+    }
+
+    // TODO: Fix temporary code
+    /**
+     * Grab webpage with the support of chrome (headless)
+     *
+     * @param url    of web page
+     * @param target filename / path
+     */
+    private void grabWithChrome(String url, String target) {
+        logger.info(">>> THREAD: {} [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " + "(headless) ", Thread.currentThread().getId(), url, target);
+        if (!target.matches("^.*\\.[Pp][Dd][Ff]$")) {
+            if (target.endsWith("."))
+                target += "pdf";
+            else
+                target += ".pdf";
+        }
+        try {
+            String cmd = String.format("google-chrome --headless --print-to-pdf='%s' '%s'",
+                    target, url);
+            logger.info(">>> Created command \"{}\" for chrome (headless)", cmd);
+            Runtime runtime = Runtime.getRuntime();
+            Process p = runtime.exec(cmd);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
+                String line;
+                while (p.isAlive() && (line = br.readLine()) != null) {
+                    logger.info(">>> [PROCESS] {}", line);
+                }
+            }
+            logger.info(">>> [END] Finish fetching and converting webpage {} to pdf {}", url, target);
+        } catch (IOException e) {
+            logger.error(">>> [ERROR] Failed to fetch html content. Error Msg: {}", e);
+        }
+    }
+
+    /**
+     * Grab pure html content and convert to pdf programmatically with Itext library
+     *
+     * @param url
+     * @param target
+     */
     private void fetchAndConvert2pdf(String url, String target) {
         logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}'", url, target);
         try {
@@ -54,7 +105,7 @@ public class HtmlDownloadController {
                 logger.error(">>> [ERROR] Failed to convert to pdf");
             }
         } catch (IOException | HtmlContentIncorrectException e) {
-            logger.error("[ERROR] Failed to fetch html content. Error Msg: {}", e);
+            logger.error(">>> [ERROR] Failed to fetch html content. Error Msg: {}", e);
         }
         logger.info(">>> [END] Finish fetching and converting webpage {} to pdf {}", url, target);
     }
