@@ -7,11 +7,9 @@ import com.curtisnewbie.impl.HtmlContentIncorrectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -38,6 +36,9 @@ public class HtmlDownloadController {
     @Autowired
     private TaskHandler taskHandler;
 
+    @Value("${rootDir}")
+    private String rootDir;
+
     @GetMapping
     public ResponseEntity fetchAndConvert2Pdf(@RequestHeader("url") String url,
                                               @RequestHeader("target") String target) {
@@ -47,8 +48,8 @@ public class HtmlDownloadController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/with/chrome")
-    public ResponseEntity convertWithChrome(@RequestHeader("url") String url, @RequestHeader("target") String target) {
+    @PostMapping("/with/chrome")
+    public ResponseEntity convertWithChrome(String url, String target) {
         taskHandler.asyncHandle(() -> {
             grabWithChrome(url, target);
         });
@@ -64,6 +65,8 @@ public class HtmlDownloadController {
      */
     private void grabWithChrome(String url, String target) {
         logger.info(">>> THREAD: {} [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " + "(headless) ", Thread.currentThread().getId(), url, target);
+        // TODO: this might be a problem, but process command won't work with '' or "", so spaces have to be removed
+        target = target.replaceAll("\\s", "");
         if (!target.matches("^.*\\.[Pp][Dd][Ff]$")) {
             if (target.endsWith("."))
                 target += "pdf";
@@ -71,8 +74,7 @@ public class HtmlDownloadController {
                 target += ".pdf";
         }
         try {
-            String cmd = String.format("google-chrome --headless --print-to-pdf='%s' '%s'",
-                    target, url);
+            String cmd = String.format("google-chrome --headless --print-to-pdf=%s%s %s", rootDir, target, url);
             logger.info(">>> Created command \"{}\" for chrome (headless)", cmd);
             Runtime runtime = Runtime.getRuntime();
             Process p = runtime.exec(cmd);
