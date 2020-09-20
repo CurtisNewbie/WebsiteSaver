@@ -8,36 +8,87 @@
 </head>
 
 <body>
+    <script>
+        const URL_FOR_ITEXT = "/download/with/itext";
+        const URL_FOR_CHROME = "/download/with/chrome";
+
+        function grabWithChrome() {
+            let url = document.getElementById("urlInputC").value;
+            let path = document.getElementById("targetInputC").value;
+            if (!validate(url, path))
+                return;
+
+            fetch(URL_FOR_CHROME, {
+                method: "POST",
+                body: JSON.stringify({
+                    "url": url,
+                    "path": path
+                }),
+                headers: { "Content-type": "application/json; charset=UTF-8" }
+            })
+            window.alert("Success!");
+        }
+
+        function grabWithItext() {
+            let url = document.getElementById("urlInputI").value;
+            let path = document.getElementById("targetInputI").value;
+
+            if (!validate(url, path))
+                return;
+
+            fetch(URL_FOR_CHROME, {
+                method: "POST",
+                body: JSON.stringify({
+                    "url": url,
+                    "path": path
+                }),
+                headers: { "Content-type": "application/json; charset=UTF-8" }
+            })
+            window.alert("Success!");
+        }
+
+        function validate(url, path) {
+            if (!url)
+                window.alert("Url shouldn't be empty!");
+            if (!path)
+                window.alert("Path shouldn't be empty!");
+            if (!path || !url)
+                return false;
+            else
+                return true;
+        }
+    </script>
     <h1>Website Saver</h1>
     <h2>Grab Webpage To PDF Using Installed Chrome</h2>
-    <form action="/download/with/chrome" method="post">
+    <form action="" method="post">
         <p>
-            <label for="urlInput">URL:</label>
-            <input type="text" name="url" id="urlInput">
+            <label for="urlInputC">URL:</label>
+            <input type="text" name="url" id="urlInputC">
         </p>
         <p>
-            <label for="targetInput">Path (absolute/relative):</label>
-            <input type="text" name="path" id="targetInput">
+            <label for="targetInputC">Path (absolute/relative):</label>
+            <input type="text" name="path" id="targetInputC">
         </p>
         <p>
-            <input type="submit" value="Send">
+            <input type="button" value="Grab With Chrome" onclick="grabWithChrome()">
         </p>
     </form>
 
     <h2>Grab Webpage To PDF Using Joup and Itext 7</h2>
-    <form action="/download/with/itext" method="post">
+    <form action="" method="post">
         <p>
-            <label for="urlInput">URL:</label>
-            <input type="text" name="url" id="urlInput">
+            <label for="urlInputI">URL:</label>
+            <input type="text" name="url" id="urlInputI">
         </p>
         <p>
-            <label for="targetInput">Path (absolute/relative):</label>
-            <input type="text" name="path" id="targetInput">
+            <label for="targetInputI">Path (absolute/relative):</label>
+            <input type="text" name="path" id="targetInputI">
         </p>
         <p>
-            <input type="submit" value="Send">
+            <input type="button" value="Grab with Itext" onclick="grabWithItext()">
         </p>
     </form>
+
 </body>
 
 </html>

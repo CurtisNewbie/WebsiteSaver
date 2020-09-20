@@ -3,6 +3,7 @@ package com.curtisnewbie.web;
 import com.curtisnewbie.api.HtmlUtil;
 import com.curtisnewbie.api.PdfUtil;
 import com.curtisnewbie.api.TaskHandler;
+import com.curtisnewbie.dto.QueryEntity;
 import com.curtisnewbie.impl.HtmlContentIncorrectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,17 +39,17 @@ public class HtmlDownloadController {
     private String rootDir;
 
     @PostMapping("/with/itext")
-    public ResponseEntity fetchAndConvert2Pdf(String url, String path) {
+    public ResponseEntity fetchAndConvert2Pdf(@RequestBody QueryEntity q) {
         taskHandler.asyncHandle(() -> {
-            fetchAndConvert2pdf(url, path);
+            fetchAndConvert2pdf(q.getUrl(), q.getPath());
         }, "fetchAndConvert2Pdf");
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/with/chrome")
-    public ResponseEntity convertWithChrome(String url, String path) {
+    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) {
         taskHandler.asyncHandle(() -> {
-            grab2PdfWithChrome(url, path);
+            grab2PdfWithChrome(q.getUrl(), q.getPath());
         }, "grab2PdfWithChrome");
         return ResponseEntity.ok().build();
     }
