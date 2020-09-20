@@ -41,17 +41,17 @@ public class HtmlDownloadController {
 
     @GetMapping
     public ResponseEntity fetchAndConvert2Pdf(@RequestHeader("url") String url,
-                                              @RequestHeader("target") String target) {
+                                              @RequestHeader("path") String path) {
         taskHandler.asyncHandle(() -> {
-            fetchAndConvert2pdf(url, target);
+            fetchAndConvert2pdf(url, path);
         });
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/with/chrome")
-    public ResponseEntity convertWithChrome(String url, String target) {
+    public ResponseEntity convertWithChrome(String url, String path) {
         taskHandler.asyncHandle(() -> {
-            grabWithChrome(url, target);
+            grabWithChrome(url, path);
         });
         return ResponseEntity.ok().build();
     }
@@ -61,30 +61,26 @@ public class HtmlDownloadController {
      * Grab webpage with the support of chrome (headless)
      *
      * @param url    of web page
-     * @param target filename / path
+     * @param path filename / path
      */
-    private void grabWithChrome(String url, String target) {
-        logger.info(">>> THREAD: {} [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " + "(headless) ", Thread.currentThread().getId(), url, target);
-        // TODO: this might be a problem, but process command won't work with '' or "", so spaces have to be removed
-        target = target.replaceAll("\\s", "");
-        if (!target.matches("^.*\\.[Pp][Dd][Ff]$")) {
-            if (target.endsWith("."))
-                target += "pdf";
-            else
-                target += ".pdf";
-        }
+    private void grabWithChrome(String url, String path) {
+        // remove all spaces and append .pdf if necessary
+        path = appendPdfFileExt(removeSpaces(path));
+        logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " + "(headless) ", Thread.currentThread().getId(), url, path);
         try {
-            String cmd = String.format("google-chrome --headless --print-to-pdf=%s%s %s", rootDir, target, url);
+            // FIXME: won't work for some reasons if we do it like '... --print-to-pdf="%s%s" "%s"', quotes are not handled properly
+            String cmd = String.format("google-chrome --headless --print-to-pdf=%s%s %s", rootDir, path, url);
             logger.info(">>> Created command \"{}\" for chrome (headless)", cmd);
             Runtime runtime = Runtime.getRuntime();
             Process p = runtime.exec(cmd);
+            // getInputStream() has no input, use getErrorStream() instead
             try (BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
                 String line;
                 while (p.isAlive() && (line = br.readLine()) != null) {
                     logger.info(">>> [PROCESS] {}", line);
                 }
             }
-            logger.info(">>> [END] Finish fetching and converting webpage {} to pdf {}", url, target);
+            logger.info(">>> [END] Finish fetching and converting webpage {} to pdf {}", url, path);
         } catch (IOException e) {
             logger.error(">>> [ERROR] Failed to fetch html content. Error Msg: {}", e);
         }
@@ -110,5 +106,20 @@ public class HtmlDownloadController {
             logger.error(">>> [ERROR] Failed to fetch html content. Error Msg: {}", e);
         }
         logger.info(">>> [END] Finish fetching and converting webpage {} to pdf {}", url, target);
+    }
+
+    private String removeSpaces(String str) {
+        return str.replaceAll("\\s", "");
+    }
+
+    private String appendPdfFileExt(String path) {
+        String mPath = path;
+        if (!mPath.matches("^.*\\.[Pp][Dd][Ff]$")) {
+            if (mPath.endsWith("."))
+                mPath += "pdf";
+            else
+                mPath += ".pdf";
+        }
+        return mPath;
     }
 }
