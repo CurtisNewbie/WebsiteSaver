@@ -1,8 +1,43 @@
 <!DOCTYPE html>
-<form action="/download/with/chrome" method="post">
-    <label for="urlInput">URL:</label>
-    <input type="text" name="url" id="urlInput">
-    <label for="targetInput">Target:</label>
-    <input type="text" name="target" id="targetInput">
-    <input type="submit" value="Send">
-</form>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Saver</title>
+</head>
+
+<body>
+    <h1>Website Saver</h1>
+    <h2>Grab Webpage To PDF Using Installed Chrome</h2>
+    <form action="/download/with/chrome" method="post">
+        <p>
+            <label for="urlInput">URL:</label>
+            <input type="text" name="url" id="urlInput">
+        </p>
+        <p>
+            <label for="targetInput">Path (absolute/relative):</label>
+            <input type="text" name="path" id="targetInput">
+        </p>
+        <p>
+            <input type="submit" value="Send">
+        </p>
+    </form>
+
+    <h2>Grab Webpage To PDF Using Joup and Itext 7</h2>
+    <form action="/download/with/itext" method="post">
+        <p>
+            <label for="urlInput">URL:</label>
+            <input type="text" name="url" id="urlInput">
+        </p>
+        <p>
+            <label for="targetInput">Path (absolute/relative):</label>
+            <input type="text" name="path" id="targetInput">
+        </p>
+        <p>
+            <input type="submit" value="Send">
+        </p>
+    </form>
+</body>
+
+</html>
