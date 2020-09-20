@@ -4,7 +4,6 @@ import com.curtisnewbie.api.PdfUtil;
 import com.curtisnewbie.api.UrlUtil;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
-import com.itextpdf.html2pdf.attach.impl.OutlineHandler;
 import com.itextpdf.styledxmlparser.css.media.MediaDeviceDescription;
 import com.itextpdf.styledxmlparser.css.media.MediaType;
 import org.slf4j.Logger;
