@@ -10,8 +10,10 @@ import com.itextpdf.styledxmlparser.css.media.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +28,9 @@ public class PdfUtilImpl implements PdfUtil {
 
     @Autowired
     private UrlUtil urlUtil;
+
+    @Value("${rootDir}")
+    private String rootDir;
 
     @Override
     public boolean toPdfFile(String htmlContent, String path) {
@@ -53,17 +58,22 @@ public class PdfUtilImpl implements PdfUtil {
                 return false;
             }
             Path parent = p.getParent();
-            if (!Files.exists(parent)) { // create dir if not exists
+            if (parent != null && !Files.exists(parent)) { // create dir if not exists
                 logger.info(">>> Parent directory {} not exists, creating directory.", parent.toAbsolutePath());
                 Files.createDirectory(parent);
             }
+            if (parent == null)
+                path = rootDir + File.separator + path;
+
             ConverterProperties props = new ConverterProperties();
             props.setBaseUri(baseUrl);
             props.setMediaDeviceDescription(new MediaDeviceDescription(MediaType.PRINT));
             logger.info(">>> Start PDF conversion...");
             HtmlConverter.convertToPdf(htmlContent, new FileOutputStream(path), props);
         } catch (Exception e) {
-            logger.error(">>> Failed to convert html content to pdf file. Error Msg: {}", e.getMessage());
+            logger.error(">>> Failed to convert html content to pdf file. Error Msg: {}", e.toString() != null ?
+                    e.toString() : e.getMessage());
+            e.printStackTrace();
             return false;
         }
         logger.info(">>> Finish PDF conversion...");
