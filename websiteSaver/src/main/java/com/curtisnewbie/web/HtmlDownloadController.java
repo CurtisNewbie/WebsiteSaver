@@ -11,12 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * @author zhuangyongj
@@ -50,20 +48,18 @@ public class HtmlDownloadController {
     @PostMapping("/with/chrome")
     public ResponseEntity convertWithChrome(String url, String path) {
         taskHandler.asyncHandle(() -> {
-            grabWithChrome(url, path);
+            grab2PdfWithChrome(url, path);
         });
         return ResponseEntity.ok().build();
     }
 
-    // TODO: Fix temporary code
-
     /**
-     * Grab webpage with the support of chrome (headless)
+     * Grab webpage and convert it to PDF file with the support of chrome (headless)
      *
      * @param url  of web page
      * @param path filename / path
      */
-    private void grabWithChrome(String url, String path) {
+    private void grab2PdfWithChrome(String url, String path) {
         // remove all spaces and append .pdf if necessary
         path = appendPdfFileExt(removeSpaces(path));
         logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " +
@@ -71,7 +67,7 @@ public class HtmlDownloadController {
         try {
             // FIXME: won't work for some reasons if we do it like '... --print-to-pdf=\"%s%s\" \"%s\"', quotes are not
             //  handled properly
-            String cmd = String.format("google-chrome --headless --print-to-pdf=%s%s %s", rootDir, path, url);
+            String cmd = String.format("google-chrome --headless --print-to-pdf=%s%s%s %s", rootDir, File.separator, path, url);
             logger.info(">>> Created command \"{}\" for chrome (headless)", cmd);
             Runtime runtime = Runtime.getRuntime();
             Process p = runtime.exec(cmd);
