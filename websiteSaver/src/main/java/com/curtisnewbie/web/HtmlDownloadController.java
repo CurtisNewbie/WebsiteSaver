@@ -41,7 +41,7 @@ public class HtmlDownloadController {
     public ResponseEntity fetchAndConvert2Pdf(String url, String path) {
         taskHandler.asyncHandle(() -> {
             fetchAndConvert2pdf(url, path);
-        });
+        }, "fetchAndConvert2Pdf");
         return ResponseEntity.ok().build();
     }
 
@@ -49,7 +49,7 @@ public class HtmlDownloadController {
     public ResponseEntity convertWithChrome(String url, String path) {
         taskHandler.asyncHandle(() -> {
             grab2PdfWithChrome(url, path);
-        });
+        }, "grab2PdfWithChrome");
         return ResponseEntity.ok().build();
     }
 

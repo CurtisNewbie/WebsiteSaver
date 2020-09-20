@@ -15,7 +15,7 @@ public class WebsiteSaverApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(WebsiteSaverApplication.class, args);
-        logger.info(">>> Website Saver Application Running...");
+        logger.info("---------------- Website Saver Application Up And Running -------------------------------");
     }
 
 }

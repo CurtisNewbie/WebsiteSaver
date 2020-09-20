@@ -22,12 +22,25 @@ public class TaskHandlerImpl implements TaskHandler {
     @Override
     public void asyncHandle(TaskWithoutResult t) {
         try {
-            logger.info(">>> Handling Job");
+            logger.info(">>> [TASK] Handling Job in Thread: {}", Thread.currentThread().getId());
             t.completeJob();
-            logger.info(">>> Finish handling job");
+            logger.info(">>> [TASK] Finish handling job in Thread: {}", Thread.currentThread().getId());
         } catch (Exception e) {
-            logger.error(">>> Error occurred while handling job - ERROR: {}", e.getMessage() != null ?
+            logger.error(">>> [TASK] Error occurred while handling job - ERROR: {}", e.getMessage() != null ?
                     e.getMessage() : e.toString());
+        }
+    }
+
+    @Async
+    @Override
+    public void asyncHandle(TaskWithoutResult t, String taskName) {
+        try {
+            logger.info(">>> [TASK] Handling Job '{}' in Thread: {}", taskName, Thread.currentThread().getId());
+            t.completeJob();
+            logger.info(">>> [TASK] Finish handling job '{}' in Thread: {}", taskName, Thread.currentThread().getId());
+        } catch (Exception e) {
+            logger.error(">>> [TASK] Error occurred while handling job '{}' - ERROR: {}", taskName,
+                    e.getMessage() != null ? e.getMessage() : e.toString());
         }
     }
 }

@@ -13,4 +13,9 @@ public interface TaskHandler {
      * Handle {@code Task} without the ability to get the completed result
      */
     void asyncHandle(TaskWithoutResult t);
+
+    /**
+     * Handle {@code Task} without the ability to get the completed result
+     */
+    void asyncHandle(TaskWithoutResult t, String taskName);
 }
