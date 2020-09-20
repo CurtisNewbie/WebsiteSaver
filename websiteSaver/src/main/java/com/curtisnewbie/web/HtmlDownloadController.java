@@ -39,9 +39,8 @@ public class HtmlDownloadController {
     @Value("${rootDir}")
     private String rootDir;
 
-    @GetMapping
-    public ResponseEntity fetchAndConvert2Pdf(@RequestHeader("url") String url,
-                                              @RequestHeader("path") String path) {
+    @PostMapping("/with/itext")
+    public ResponseEntity fetchAndConvert2Pdf(String url, String path) {
         taskHandler.asyncHandle(() -> {
             fetchAndConvert2pdf(url, path);
         });
@@ -57,18 +56,21 @@ public class HtmlDownloadController {
     }
 
     // TODO: Fix temporary code
+
     /**
      * Grab webpage with the support of chrome (headless)
      *
-     * @param url    of web page
+     * @param url  of web page
      * @param path filename / path
      */
     private void grabWithChrome(String url, String path) {
         // remove all spaces and append .pdf if necessary
         path = appendPdfFileExt(removeSpaces(path));
-        logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " + "(headless) ", Thread.currentThread().getId(), url, path);
+        logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " +
+                "(headless) ", url, path);
         try {
-            // FIXME: won't work for some reasons if we do it like '... --print-to-pdf="%s%s" "%s"', quotes are not handled properly
+            // FIXME: won't work for some reasons if we do it like '... --print-to-pdf=\"%s%s\" \"%s\"', quotes are not
+            //  handled properly
             String cmd = String.format("google-chrome --headless --print-to-pdf=%s%s %s", rootDir, path, url);
             logger.info(">>> Created command \"{}\" for chrome (headless)", cmd);
             Runtime runtime = Runtime.getRuntime();
@@ -90,22 +92,22 @@ public class HtmlDownloadController {
      * Grab pure html content and convert to pdf programmatically with Itext library
      *
      * @param url
-     * @param target
+     * @param path
      */
-    private void fetchAndConvert2pdf(String url, String target) {
-        logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}'", url, target);
+    private void fetchAndConvert2pdf(String url, String path) {
+        logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}'", url, path);
         try {
             String ctn = htmlUtil.grabHtmlContent(url);
             String baseUrl = htmlUtil.extractBaseUrl(ctn); // check if a base url is declared
             if (baseUrl == null)
                 baseUrl = url;
-            if (!pdfUtil.toPdfFile(ctn, baseUrl, target)) {
+            if (!pdfUtil.toPdfFile(ctn, baseUrl, path)) {
                 logger.error(">>> [ERROR] Failed to convert to pdf");
             }
         } catch (IOException | HtmlContentIncorrectException e) {
             logger.error(">>> [ERROR] Failed to fetch html content. Error Msg: {}", e);
         }
-        logger.info(">>> [END] Finish fetching and converting webpage {} to pdf {}", url, target);
+        logger.info(">>> [END] Finish fetching and converting webpage {} to pdf {}", url, path);
     }
 
     private String removeSpaces(String str) {
