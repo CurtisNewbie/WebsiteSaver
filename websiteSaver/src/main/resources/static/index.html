@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Saver</title>
     <script type="text/javascript" src="./node_modules/jsencrypt/bin/jsencrypt.js"></script>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -31,7 +32,6 @@
             }).then(response => {
                 response.text().then(txt => {
                     publicKey = txt;
-                    console.log(publicKey);
                 }
                 );
             })
@@ -113,41 +113,60 @@
             return true;
         }
     </script>
-    <h1>Website Saver</h1>
-    <p>
-        <label for="authKeyIn">Password:</label>
-        <input type="password" name="path" id="authKeyIn">
-    </p>
-    <h2>Grab Webpage As PDF Using Installed Chrome</h2>
-    <form action="" method="post">
-        <p>
-            <label for="urlInputC">URL:</label>
-            <input type="text" name="url" id="urlInputC">
-        </p>
-        <p>
-            <label for="targetInputC">Path (absolute/relative):</label>
-            <input type="text" name="path" id="targetInputC">
-        </p>
-        <p>
-            <input type="button" value="Grab With Chrome" onclick="grabWithChrome()">
-        </p>
-    </form>
-
-    <h2>Grab Webpage As PDF Using Joup and Itext 7</h2>
-    <form action="" method="post">
-        <p>
-            <label for="urlInputI">URL:</label>
-            <input type="text" name="url" id="urlInputI">
-        </p>
-        <p>
-            <label for="targetInputI">Path (absolute/relative):</label>
-            <input type="text" name="path" id="targetInputI">
-        </p>
-        <p>
-            <input type="button" value="Grab with Itext" onclick="grabWithItext()">
-        </p>
-    </form>
-
+    <div class="container bootstrap mt-4 mb-3">
+        <h2>Website Saver</h2>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Password:</span>
+            </div>
+            <input type="password" id="authKeyIn" class="form-control" placeholder="authentication key"
+                aria-describedby="basic-addon1">
+        </div>
+    </div>
+    <div class="container mt-3">
+        <div class="m-2 p-4 shadow">
+            <h3>Google-Chrome</h3>
+            <p>Grab Webpage As PDF Using Installed Chrome</p>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">URL:</span>
+                </div>
+                <input type="text" id="urlInputC" class="form-control" placeholder="URL"
+                    aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Name:</span>
+                </div>
+                <input type="text" id="targetInputC" class="form-control" placeholder="Path / Name of PDF"
+                    aria-describedby="basic-addon1">
+            </div>
+            <p>
+                <button type="button" class="btn btn-secondary" onclick="grabWithChrome()">Grab With Chrome</button>
+            </p>
+        </div>
+        <div class="ml-2 mb-2 mr-2 mt-3 p-4 shadow">
+            <h3>Itext 7 & Jsoup</h3>
+            <p>Grab Webpage As PDF Using Joup and Itext 7</p>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">URL:</span>
+                </div>
+                <input type="text" id="urlInputI" class="form-control" placeholder="URL"
+                    aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Name:</span>
+                </div>
+                <input type="text" id="targetInputI" class="form-control" placeholder="Path / Name of PDF"
+                    aria-describedby="basic-addon1">
+            </div>
+            <p>
+                <button type="button" class="btn btn-secondary" onclick="grabWithItext()">Grab with Itext</button>
+            </p>
+        </div>
+    </div>
 </body>
 
 </html>
