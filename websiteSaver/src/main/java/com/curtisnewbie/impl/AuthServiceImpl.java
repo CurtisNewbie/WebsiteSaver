@@ -24,18 +24,19 @@ public class AuthServiceImpl implements AuthService {
     private String authKey = "1234567";
 
     @Override
-    public boolean isAuthenticated(String authKey) {
-        int index = authKey.indexOf(DELIMITER);
-        if (index == -1 || index == 0 || index == authKey.length() - 1) {
+    public boolean isAuthenticated(String authStrs) {
+        int index = authStrs.indexOf(DELIMITER);
+        if (index == -1 || index == 0 || index == authStrs.length() - 1) {
             logger.error("Invalid key, not authenticated");
             return false;
         }
-        long authTime = Long.parseLong(authKey.substring(0, index));
+        long authTime = Long.parseLong(authStrs.substring(0, index));
         if (new Date().getTime() - authTime >= 10000) { // only valid for 10 seconds
             logger.error("Key expired, not authenticated");
             return false;
         }
-        String password = authKey.substring(index + DELIMITER.length());
+        String password = authStrs.substring(index + DELIMITER.length());
+        logger.info("Parsed password: {}", password);
         return authKey.equals(password);
     }
 }

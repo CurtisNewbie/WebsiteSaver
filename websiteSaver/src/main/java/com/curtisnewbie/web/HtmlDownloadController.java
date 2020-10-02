@@ -46,6 +46,7 @@ public class HtmlDownloadController {
 
     @PostMapping("/with/itext")
     public ResponseEntity fetchAndConvert2Pdf(@RequestBody QueryEntity q) {
+        logger.info("Received QueryEntity: {}", q.toString());
         try {
             String authKey = rsaDecryptionService.decrypt(q.getAuthKey());
             if (authService.isAuthenticated(authKey)) {
@@ -64,6 +65,7 @@ public class HtmlDownloadController {
 
     @PostMapping("/with/chrome")
     public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) {
+        logger.info("Received QueryEntity: {}", q.toString());
         try {
             String authKey = rsaDecryptionService.decrypt(q.getAuthKey());
             if (authService.isAuthenticated(authKey)) {

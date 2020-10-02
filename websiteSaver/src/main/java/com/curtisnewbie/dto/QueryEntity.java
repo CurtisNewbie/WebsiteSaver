@@ -31,4 +31,9 @@ public class QueryEntity {
     public void setAuthKey(String authKey) {
         this.authKey = authKey;
     }
+
+    @Override
+    public String toString() {
+        return "QueryEntity{" + "url='" + url + '\'' + ", path='" + path + '\'' + ", authKey='" + authKey + '\'' + '}';
+    }
 }
