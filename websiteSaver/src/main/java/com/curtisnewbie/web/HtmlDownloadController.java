@@ -1,15 +1,14 @@
 package com.curtisnewbie.web;
 
-import com.curtisnewbie.api.ChromeUtil;
-import com.curtisnewbie.api.HtmlUtil;
-import com.curtisnewbie.api.PdfUtil;
-import com.curtisnewbie.api.TaskHandler;
+import com.curtisnewbie.api.*;
 import com.curtisnewbie.dto.QueryEntity;
+import com.curtisnewbie.exception.DecryptionFailureException;
 import com.curtisnewbie.impl.HtmlContentIncorrectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,23 +35,49 @@ public class HtmlDownloadController {
     @Autowired
     private ChromeUtil chromeUtil;
 
+    @Autowired
+    private RsaDecryptionService rsaDecryptionService;
+
+    @Autowired
+    private AuthService authService;
+
     @Value("${rootDir}")
     private String rootDir;
 
     @PostMapping("/with/itext")
     public ResponseEntity fetchAndConvert2Pdf(@RequestBody QueryEntity q) {
-        taskHandler.asyncHandle(() -> {
-            fetchAndConvert2pdf(q.getUrl(), q.getPath());
-        }, "fetchAndConvert2Pdf");
-        return ResponseEntity.ok().build();
+        try {
+            String authKey = rsaDecryptionService.decrypt(q.getAuthKey());
+            if (authService.isAuthenticated(authKey)) {
+                taskHandler.asyncHandle(() -> {
+                    fetchAndConvert2pdf(q.getUrl(), q.getPath());
+                }, "fetchAndConvert2Pdf");
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        } catch (DecryptionFailureException e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @PostMapping("/with/chrome")
     public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) {
-        taskHandler.asyncHandle(() -> {
-            grab2PdfWithChrome(q.getUrl(), q.getPath());
-        }, "grab2PdfWithChrome");
-        return ResponseEntity.ok().build();
+        try {
+            String authKey = rsaDecryptionService.decrypt(q.getAuthKey());
+            if (authService.isAuthenticated(authKey)) {
+                taskHandler.asyncHandle(() -> {
+                    grab2PdfWithChrome(q.getUrl(), q.getPath());
+                }, "grab2PdfWithChrome");
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+        } catch (DecryptionFailureException e) {
+            logger.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**

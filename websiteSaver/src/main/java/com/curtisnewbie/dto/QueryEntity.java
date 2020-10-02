@@ -6,6 +6,7 @@ package com.curtisnewbie.dto;
 public class QueryEntity {
     private String url;
     private String path;
+    private String authKey;
 
     public String getUrl() {
         return url;
@@ -21,5 +22,13 @@ public class QueryEntity {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getAuthKey() {
+        return authKey;
+    }
+
+    public void setAuthKey(String authKey) {
+        this.authKey = authKey;
     }
 }

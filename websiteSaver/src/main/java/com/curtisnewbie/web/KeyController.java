@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/key")
-public class EncryptionController {
+public class KeyController {
 
     @Autowired
     private RsaService rsaService;
 
     @GetMapping("/public")
     public ResponseEntity<String> getPublicKey() {
-        return ResponseEntity.ok(rsaService.getPubKeyStr());
+        return ResponseEntity.ok(rsaService.getPublicKeyStr());
     }
 }

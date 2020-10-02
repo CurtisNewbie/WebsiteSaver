@@ -5,24 +5,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Saver</title>
+    <script type="text/javascript" src="./node_modules/jsencrypt/bin/jsencrypt.js"></script>
 </head>
 
 <body>
     <script>
         const URL_FOR_ITEXT = "/download/with/itext";
         const URL_FOR_CHROME = "/download/with/chrome";
+        const URL_FOR_PUB_KEY = "/key/public";
+        const RSAEncrypt = new JSEncrypt();
+        let publicKey = null;
+
+        // download public key for encryption
+        downloadPubKey();
+
+        function hasPubKey() {
+            if (publicKey)
+                return true; else
+                return false;
+        }
+
+        function downloadPubKey() {
+            fetch(URL_FOR_PUB_KEY, {
+                method: "GET"
+            }).then(response => {
+                response.text().then(txt => {
+                    publicKey = txt;
+                    console.log(publicKey);
+                }
+                );
+            })
+        }
+
+        function encrypt(text) {
+            RSAEncrypt.setPublicKey(publicKey);
+            return RSAEncrypt.encrypt(text);
+        }
 
         function grabWithChrome() {
+            if (!hasPubKey()) {
+                downloadPubKey();
+                return;
+            }
+
             let url = document.getElementById("urlInputC").value;
             let path = document.getElementById("targetInputC").value;
-            if (!validate(url, path))
+            let authKey = document.getElementById("authKeyIn").value;
+
+            if (!validate(url, path, authKey))
                 return;
 
             fetch(URL_FOR_CHROME, {
                 method: "POST",
                 body: JSON.stringify({
                     "url": url,
-                    "path": path
+                    "path": path,
+                    "authKey": encrypt(Date.now() + "::" + authKey)
                 }),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             })
@@ -30,35 +68,56 @@
         }
 
         function grabWithItext() {
+
+            if (!hasPubKey()) {
+                downloadPubKey();
+                return;
+            }
+
             let url = document.getElementById("urlInputI").value;
             let path = document.getElementById("targetInputI").value;
+            let authKey = document.getElementById("authKeyIn").value;
 
-            if (!validate(url, path))
+            if (!validate(url, path, authKey))
                 return;
 
-            fetch(URL_FOR_CHROME, {
+            fetch(URL_FOR_ITEXT, {
                 method: "POST",
                 body: JSON.stringify({
                     "url": url,
-                    "path": path
+                    "path": path,
+                    "authKey": encrypt(Date.now() + "::" + authKey)
                 }),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             })
             window.alert("Success!");
         }
 
-        function validate(url, path) {
-            if (!url)
+        function validate(url, path, authKey) {
+            if (!url) {
                 window.alert("Url shouldn't be empty!");
-            if (!path)
-                window.alert("Path shouldn't be empty!");
-            if (!path || !url)
                 return false;
-            else
-                return true;
+            }
+            if (!path) {
+                window.alert("Path shouldn't be empty!");
+                return false;
+            }
+            if (!authKey) {
+                window.alert("Enter your password first!");
+                return false;
+            }
+            if (authKey.indexOf(":") > 0) {
+                window.alert("Password doesn't allow ':' !");
+                return false;
+            }
+            return true;
         }
     </script>
     <h1>Website Saver</h1>
+    <p>
+        <label for="authKeyIn">Password:</label>
+        <input type="password" name="path" id="authKeyIn">
+    </p>
     <h2>Grab Webpage As PDF Using Installed Chrome</h2>
     <form action="" method="post">
         <p>
