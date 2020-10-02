@@ -5,10 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.Base64;
 
 /**
@@ -22,37 +21,53 @@ public class RsaServiceImpl implements RsaService {
 
     private final String pubKeyStr;
     private final String priKeyStr;
-    private final Key publicKey;
-    private final Key privateKey;
+    private final Key pubKey;
+    private final Key privKey;
+    private final PrivateKey privateKey;
 
-    RsaServiceImpl() throws NoSuchAlgorithmException {
+    protected RsaServiceImpl() throws NoSuchAlgorithmException {
         // only generate key pair for once
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(RSA);
         KeyPair kp = kpg.generateKeyPair();
-        publicKey = kp.getPublic();
-        privateKey = kp.getPrivate();
-        pubKeyStr = Base64.getEncoder().encodeToString(publicKey.getEncoded());
-        priKeyStr = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+        pubKey = kp.getPublic();
+        privKey = kp.getPrivate();
+        pubKeyStr = Base64.getEncoder().encodeToString(pubKey.getEncoded());
+        priKeyStr = Base64.getEncoder().encodeToString(privKey.getEncoded());
+        privateKey = createPrivateKey(privKey.getEncoded());
+    }
 
+    private PrivateKey createPrivateKey(byte[] privateKey) {
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateKey);
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance(RSA);
+            return keyFactory.generatePrivate(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(String.format("Failed to generate private key: %s", e.getMessage()));
+        }
     }
 
     @Override
-    public String getPublicKeyStr() {
+    public String getPubKeyStr() {
         return pubKeyStr;
     }
 
     @Override
-    public byte[] getPublicKey() {
-        return publicKey.getEncoded();
+    public byte[] getPubKey() {
+        return pubKey.getEncoded();
     }
 
     @Override
-    public byte[] getPrivateKey() {
-        return privateKey.getEncoded();
+    public byte[] getPrivKey() {
+        return privKey.getEncoded();
     }
 
     @Override
-    public String getPrivateKeyStr() {
+    public String getPrivKeyStr() {
         return priKeyStr;
+    }
+
+    @Override
+    public PrivateKey getPrivateKey() {
+        return privateKey;
     }
 }

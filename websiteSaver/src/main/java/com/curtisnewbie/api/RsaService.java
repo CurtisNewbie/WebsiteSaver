@@ -1,9 +1,12 @@
 package com.curtisnewbie.api;
 
+import java.security.PrivateKey;
+
 /**
  * <p>
  * Service for RSA encryption
  * </p>
+ *
  * @author zhuangyongj
  */
 public interface RsaService {
@@ -13,24 +16,33 @@ public interface RsaService {
      *
      * @return
      */
-    String getPublicKeyStr();
+    String getPubKeyStr();
 
     /**
-     * Get public key
-     * @return
-     */
-    byte[] getPublicKey();
-
-    /**
-     * Get private key
+     * Get public key in bytes
      *
      * @return
      */
-    byte[] getPrivateKey();
+    byte[] getPubKey();
+
+    /**
+     * Get private key in bytes
+     *
+     * @return
+     */
+    byte[] getPrivKey();
 
     /**
      * Get private key string
+     *
      * @return
      */
-    String getPrivateKeyStr();
+    String getPrivKeyStr();
+
+    /**
+     * Get {@code PrivateKey} for decryption
+     *
+     * @return
+     */
+    PrivateKey getPrivateKey();
 }
