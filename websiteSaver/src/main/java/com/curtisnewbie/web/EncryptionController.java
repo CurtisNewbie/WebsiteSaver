@@ -19,6 +19,6 @@ public class EncryptionController {
 
     @GetMapping("/public")
     public ResponseEntity<String> getPublicKey() {
-        return ResponseEntity.ok(rsaService.getPublicKey());
+        return ResponseEntity.ok(rsaService.getPublicKeyStr());
     }
 }

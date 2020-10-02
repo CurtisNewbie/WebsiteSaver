@@ -9,16 +9,28 @@ package com.curtisnewbie.api;
 public interface RsaService {
 
     /**
-     * Get public key
+     * Get public key string
      *
      * @return
      */
-    String getPublicKey();
+    String getPublicKeyStr();
+
+    /**
+     * Get public key
+     * @return
+     */
+    byte[] getPublicKey();
 
     /**
      * Get private key
      *
      * @return
      */
-    String getPrivateKey();
+    byte[] getPrivateKey();
+
+    /**
+     * Get private key string
+     * @return
+     */
+    String getPrivateKeyStr();
 }
