@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
             return false;
         }
         long authTime = Long.parseLong(authStr.substring(0, index));
-        if (new Date().getTime() - authTime >= 10000) { // only valid for 10 seconds
+        if (new Date().getTime() - authTime >= 1000) { // only valid for one second
             logger.error("Key expired, not authenticated");
             return false;
         }
