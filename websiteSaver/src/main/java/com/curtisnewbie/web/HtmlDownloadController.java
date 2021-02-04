@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -44,40 +45,45 @@ public class HtmlDownloadController {
     @Value("${rootDir}")
     private String rootDir;
 
+    @Value("${isLocalOnly}")
+    private boolean isLocalOnly;
+
     @PostMapping("/with/itext")
-    public ResponseEntity fetchAndConvert2Pdf(@RequestBody QueryEntity q) {
-        logger.info("Received QueryEntity: {}", q.toString());
+    public ResponseEntity fetchAndConvert2Pdf(@RequestBody QueryEntity q, HttpServletRequest request) {
+        if (!canRequest(request))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         try {
             String authKey = rsaDecryptionService.decrypt(q.getAuthKey());
             if (authService.isAuthenticated(authKey)) {
                 taskHandler.asyncHandle(() -> {
-                    fetchAndConvert2pdf(q.getUrl(), q.getPath());
+                    fetchAndConvert2pdf(rsaDecryptionService.decrypt(q.getUrl()), rsaDecryptionService.decrypt(q.getPath()));
                 }, "fetchAndConvert2Pdf");
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (DecryptionFailureException e) {
-            logger.error(e.getMessage());
+            logger.error("Decryption failure", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
     @PostMapping("/with/chrome")
-    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) {
-        logger.info("Received QueryEntity: {}", q.toString());
+    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q, HttpServletRequest request) {
+        if (!canRequest(request))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         try {
             String authKey = rsaDecryptionService.decrypt(q.getAuthKey());
             if (authService.isAuthenticated(authKey)) {
                 taskHandler.asyncHandle(() -> {
-                    grab2PdfWithChrome(q.getUrl(), q.getPath());
+                    grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()), rsaDecryptionService.decrypt(q.getPath()));
                 }, "grab2PdfWithChrome");
                 return ResponseEntity.ok().build();
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             }
         } catch (DecryptionFailureException e) {
-            logger.error(e.getMessage());
+            logger.error("Decryption failure", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
@@ -112,5 +118,14 @@ public class HtmlDownloadController {
             logger.error(">>> [ERROR] Failed to fetch html content. Error Msg: {}", e);
         }
         logger.info(">>> [END] Finish fetching and converting webpage {} to pdf {}", url, path);
+    }
+
+    private boolean canRequest(HttpServletRequest request) {
+        if (isLocalOnly) {
+            logger.info("'isLocalOnly' flag turned on, verifying if the request is from localhost");
+            return request.getRemoteAddr().equals(request.getLocalAddr());
+        } else {
+            return true;
+        }
     }
 }

@@ -58,8 +58,8 @@
             fetch(URL_FOR_CHROME, {
                 method: "POST",
                 body: JSON.stringify({
-                    "url": url,
-                    "path": path,
+                    "url": encrypt(url),
+                    "path": encrypt(path),
                     "authKey": encrypt(Date.now() + "::" + authKey)
                 }),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -84,8 +84,8 @@
             fetch(URL_FOR_ITEXT, {
                 method: "POST",
                 body: JSON.stringify({
-                    "url": url,
-                    "path": path,
+                    "url": encrypt(url),
+                    "path": encrypt(path),
                     "authKey": encrypt(Date.now() + "::" + authKey)
                 }),
                 headers: { "Content-type": "application/json; charset=UTF-8" }

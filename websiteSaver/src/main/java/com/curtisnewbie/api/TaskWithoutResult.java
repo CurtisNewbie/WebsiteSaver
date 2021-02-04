@@ -1,5 +1,7 @@
 package com.curtisnewbie.api;
 
+import com.curtisnewbie.exception.DecryptionFailureException;
+
 /**
  * Task without the need to return result
  *
@@ -13,5 +15,5 @@ public interface TaskWithoutResult {
      *
      * @return
      */
-    void completeJob();
+    void completeJob() throws DecryptionFailureException;
 }

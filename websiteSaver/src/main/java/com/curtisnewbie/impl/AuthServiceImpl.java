@@ -38,7 +38,8 @@ public class AuthServiceImpl implements AuthService {
             return false;
         }
         String password = authStr.substring(index + DELIMITER.length());
-        logger.info("Parsed password: {}", password);
-        return authKey.equals(password);
+        boolean isAuthenticated = authKey.equals(password);
+        logger.info("Parsed password: {}, is authenticated: {}", password, isAuthenticated);
+        return isAuthenticated;
     }
 }
