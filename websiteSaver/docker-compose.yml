@@ -1,0 +1,19 @@
+version: "3.5"
+services:
+  websitesaver-back:
+    image: websitesaver-backend:latest
+    # build: .
+    networks:
+      - websitesaver-net
+  websitesaver-front:
+    image: websitesaver-frontend:latest
+    # build: ./frontend
+    ports:
+      - 80:80
+    networks:
+      - websitesaver-net
+    depends_on:
+      - websitesaver-back
+
+networks:
+  websitesaver-net: {}

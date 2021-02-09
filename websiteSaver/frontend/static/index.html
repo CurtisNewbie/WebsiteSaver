@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Saver</title>
+    <script type="text/javascript" src="./node_modules/jsencrypt/bin/jsencrypt.js"></script>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <script>
+        const URL_FOR_ITEXT = "/download/with/itext";
+        const URL_FOR_CHROME = "/download/with/chrome";
+        const URL_FOR_PUB_KEY = "/key/public";
+        const RSAEncrypt = new JSEncrypt();
+        let publicKey = null;
+
+        // download public key for encryption
+        downloadPubKey();
+
+        function hasPubKey() {
+            if (publicKey) return true;
+            else return false;
+        }
+
+        function downloadPubKey() {
+            fetch(URL_FOR_PUB_KEY, {
+                method: "GET",
+            }).then((response) => {
+                response.text().then((txt) => {
+                    publicKey = txt;
+                });
+            });
+        }
+
+        function encrypt(text) {
+            RSAEncrypt.setPublicKey(publicKey);
+            return RSAEncrypt.encrypt(text);
+        }
+
+        function grabWithChrome() {
+            if (!hasPubKey()) {
+                downloadPubKey();
+                return;
+            }
+
+            let url = document.getElementById("urlInputC").value;
+            let path = document.getElementById("targetInputC").value;
+            let authKey = document.getElementById("authKeyIn").value;
+
+            if (!validate(url, path, authKey)) return;
+
+            fetch(URL_FOR_CHROME, {
+                method: "POST",
+                body: JSON.stringify({
+                    url: encrypt(url),
+                    path: encrypt(path),
+                    authKey: encrypt(Date.now() + "::" + authKey),
+                }),
+                headers: { "Content-type": "application/json; charset=UTF-8" },
+            }).then((response) => {
+                if (response.status === 200) {
+                    window.alert("Success!");
+                } else {
+                    window.alert("Failed!");
+                }
+            });
+        }
+
+        function grabWithItext() {
+            if (!hasPubKey()) {
+                downloadPubKey();
+                return;
+            }
+
+            let url = document.getElementById("urlInputI").value;
+            let path = document.getElementById("targetInputI").value;
+            let authKey = document.getElementById("authKeyIn").value;
+
+            if (!validate(url, path, authKey)) return;
+
+            fetch(URL_FOR_ITEXT, {
+                method: "POST",
+                body: JSON.stringify({
+                    url: encrypt(url),
+                    path: encrypt(path),
+                    authKey: encrypt(Date.now() + "::" + authKey),
+                }),
+                headers: { "Content-type": "application/json; charset=UTF-8" },
+            });
+            window.alert("Success!");
+        }
+
+        function validate(url, path, authKey) {
+            if (!url) {
+                window.alert("Url shouldn't be empty!");
+                return false;
+            }
+            if (!path) {
+                window.alert("Path shouldn't be empty!");
+                return false;
+            }
+            if (!authKey) {
+                window.alert("Enter your password first!");
+                return false;
+            }
+            if (authKey.indexOf(":") > 0) {
+                window.alert("Password doesn't allow ':' !");
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <div class="container bootstrap mt-4 mb-3">
+        <h2>Website Saver</h2>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Password:</span>
+            </div>
+            <input type="password" id="authKeyIn" class="form-control" placeholder="authentication key"
+                aria-describedby="basic-addon1">
+        </div>
+    </div>
+    <div class="container mt-3">
+        <div class="m-2 p-4 shadow">
+            <h3>Google-Chrome</h3>
+            <p>Grab Webpage As PDF Using Installed Chrome</p>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">URL:</span>
+                </div>
+                <input type="text" id="urlInputC" class="form-control" placeholder="URL"
+                    aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Name:</span>
+                </div>
+                <input type="text" id="targetInputC" class="form-control" placeholder="Path / Name of PDF"
+                    aria-describedby="basic-addon1">
+            </div>
+            <p>
+                <button type="button" class="btn btn-secondary" onclick="grabWithChrome()">Grab With Chrome</button>
+            </p>
+        </div>
+        <div class="ml-2 mb-2 mr-2 mt-3 p-4 shadow">
+            <h3>Itext 7 & Jsoup</h3>
+            <p>Grab Webpage As PDF Using Joup and Itext 7</p>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">URL:</span>
+                </div>
+                <input type="text" id="urlInputI" class="form-control" placeholder="URL"
+                    aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Name:</span>
+                </div>
+                <input type="text" id="targetInputI" class="form-control" placeholder="Path / Name of PDF"
+                    aria-describedby="basic-addon1">
+            </div>
+            <p>
+                <button type="button" class="btn btn-secondary" onclick="grabWithItext()">Grab with Itext</button>
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>
