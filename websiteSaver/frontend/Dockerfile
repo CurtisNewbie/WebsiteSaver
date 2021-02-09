@@ -8,6 +8,6 @@ LABEL "created"="09/02/2021"
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 # copy hosted files
-COPY ./static/ /usr/share/nginx/html/
+COPY ./static/ /static 
 
 EXPOSE 80
