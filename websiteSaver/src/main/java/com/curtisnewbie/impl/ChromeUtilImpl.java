@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,11 @@ public class ChromeUtilImpl implements ChromeUtil {
     @Value("${rootDir}")
     private String rootDir;
 
+    @PostConstruct
+    void init() {
+        logger.info("ChromeUtil initialised, rootDir: '{}'", rootDir);
+    }
+
     /**
      * Grab webpage and convert it to PDF file with the support of chrome (headless)
      *
@@ -29,15 +35,18 @@ public class ChromeUtilImpl implements ChromeUtil {
      * @param path filename / path
      */
     @Override
-    public void grab2Pdf(String url, String path) {
+    public void grab2Pdf(final String url, String path) {
+        // spaces are not allowed, and quotes are not working (for unknown reasons)
         // remove all spaces and append .pdf if necessary
-        path = appendPdfFileExt(removeSpaces(path));
-        logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " +
-                "(headless) ", url, path);
+        path = appendPdfFileExt(removeInvalidChars(path));
+        if (path.isEmpty() || path.isBlank())
+
+            logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}' using chrome " +
+                    "(headless) ", url, path);
         try {
-            // spaces are not allowed, and quotes are not working (for unknown reasons)
-            String cmd = String.format("google-chrome --headless --print-to-pdf=%s%s%s %s", rootDir, File.separator,
-                    path, url);
+            final String baseCmd = "google-chrome --headless --print-to-pdf=";
+            final String concatedPath = rootDir + File.separator + path;
+            final String cmd = String.format("%s%s %s", baseCmd, concatedPath, url);
             logger.info(">>> Created command \"{}\" for chrome (headless)", cmd);
             Runtime runtime = Runtime.getRuntime();
             Process p = runtime.exec(cmd);
@@ -54,10 +63,23 @@ public class ChromeUtilImpl implements ChromeUtil {
         }
     }
 
-    private String removeSpaces(String str) {
-        return str.replaceAll("\\s", "");
+    /**
+     * Remove all spaces and '.' chars
+     * @throws IllegalArgumentException if the path becomes empty after invalid chars removal
+     */
+    private String removeInvalidChars(String path) {
+        path = path.replaceAll("[\\s\\.]", "");
+        if (path.startsWith(File.separator)) {
+            if (path.length() > 1)
+                return path.substring(1);
+            else
+                throw new IllegalArgumentException("File path illegal, path should not be empty after invalid chars removal");
+        } else {
+            return path;
+        }
     }
 
+    // append '.pdf' file extension if necessary
     private String appendPdfFileExt(String path) {
         String mPath = path;
         if (!mPath.matches("^.*\\.[Pp][Dd][Ff]$")) {
