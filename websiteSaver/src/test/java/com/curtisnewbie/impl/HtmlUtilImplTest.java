@@ -4,6 +4,7 @@ import com.curtisnewbie.api.HtmlUtil;
 import com.curtisnewbie.api.PdfUtil;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,7 @@ public class HtmlUtilImplTest {
     private PdfUtil pdfUtil;
 
     @Test
+    @Disabled
     void shouldGrabHtmlContent() throws IOException, HtmlContentIncorrectException {
         Document doc = htmlUtil.grapDoc(HTML_CONTENT_URL);
         Assertions.assertNotNull(doc);

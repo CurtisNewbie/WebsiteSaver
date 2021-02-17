@@ -49,6 +49,8 @@ public class AuthServiceImpl implements AuthService {
             for (int i = 0; i < 6; i++)
                 generatedAuthKey += chars.get(sr.nextInt(chars.size() + 1)); // ASCII chars that can be easily typed
             logger.info("Using generated authKey: '{}'", generatedAuthKey);
+        } else {
+            logger.info("Using predefined authKey: '{}'", authKey);
         }
     }
 
