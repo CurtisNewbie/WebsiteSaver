@@ -4,16 +4,19 @@ import com.curtisnewbie.api.*;
 import com.curtisnewbie.dto.QueryEntity;
 import com.curtisnewbie.exception.DecryptionFailureException;
 import com.curtisnewbie.impl.HtmlContentIncorrectException;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author zhuangyongj
@@ -76,7 +79,10 @@ public class HtmlDownloadController {
             String authKey = rsaDecryptionService.decrypt(q.getAuthKey());
             if (authService.isAuthenticated(authKey)) {
                 taskHandler.asyncHandle(() -> {
-                    grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()), rsaDecryptionService.decrypt(q.getPath()));
+                    if (StringUtils.hasLength(q.getPath()))
+                        grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()), rsaDecryptionService.decrypt(q.getPath()));
+                    else
+                        grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()));
                 }, "grab2PdfWithChrome");
                 return ResponseEntity.ok().build();
             } else {
@@ -99,6 +105,15 @@ public class HtmlDownloadController {
     }
 
     /**
+     * Grab website as pdf using google-chrome
+     *
+     * @param url
+     */
+    private void grab2PdfWithChrome(String url) throws IOException, HtmlContentIncorrectException {
+        chromeUtil.grab2Pdf(url);
+    }
+
+    /**
      * Grab pure html content and convert to pdf programmatically with Itext library
      *
      * @param url
@@ -107,11 +122,14 @@ public class HtmlDownloadController {
     private void fetchAndConvert2pdf(String url, String path) {
         logger.info(">>> [BEGIN] Request fetching and converting webpage '{}' to pdf '{}'", url, path);
         try {
-            String ctn = htmlUtil.grabHtmlContent(url);
-            String baseUrl = htmlUtil.extractBaseUrl(ctn); // check if a base url is declared
-            if (baseUrl == null)
+            Document doc = htmlUtil.grapDoc(url);
+            Optional<String> baseUrlOpt = htmlUtil.extractBaseUrl(doc); // check if a base url is declared
+            String baseUrl;
+            if (baseUrlOpt.isEmpty())
                 baseUrl = url;
-            if (!pdfUtil.toPdfFile(ctn, baseUrl, path)) {
+            else
+                baseUrl = baseUrlOpt.get();
+            if (!pdfUtil.toPdfFile(doc.toString(), baseUrl, path)) {
                 logger.error(">>> [ERROR] Failed to convert to pdf");
             }
         } catch (IOException | HtmlContentIncorrectException e) {

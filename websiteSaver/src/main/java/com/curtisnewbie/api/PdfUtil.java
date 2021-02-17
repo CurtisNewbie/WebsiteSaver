@@ -53,7 +53,7 @@ public interface PdfUtil {
      * @param baseUrl     of the htmlContent
      * @param path        absolute or relative path to the pdf file (that will be created)
      * @return TRUE if operation success else FALSE
-     * @see HtmlUtil#extractBaseUrl(String)
+     * @see HtmlUtil#extractBaseUrl(org.jsoup.nodes.Document)
      */
     boolean toPdfFile(String htmlContent, String baseUrl, String path);
 

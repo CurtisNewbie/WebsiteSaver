@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Class that provides util methods related to pdf
@@ -17,23 +18,31 @@ public interface HtmlUtil {
      * Grab the html content of a link
      *
      * @param url website url
-     * @return html content
+     * @return html model
      */
-    String grabHtmlContent(String url) throws IOException, HtmlContentIncorrectException;
+    Document grapDoc(String url) throws IOException, HtmlContentIncorrectException;
 
     /**
      * Extract CSS links
      *
-     * @param htmlContent
+     * @param document html document
      * @return
      */
-    List<String> extractCssLinks(String htmlContent);
+    List<String> extractCssLinks(Document document);
 
     /**
      * Extract Base url from {@code base} html tag.
      *
-     * @param htmlContent html content
+     * @param document html document
      * @return base url or NULL if not found
      */
-    String extractBaseUrl(String htmlContent);
+    Optional<String> extractBaseUrl(Document document);
+
+    /**
+     * Extract title
+     *
+     * @param document html document
+     * @return
+     */
+    List<String> extractTitle(Document document);
 }

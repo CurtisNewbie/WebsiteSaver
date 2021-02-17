@@ -23,6 +23,7 @@ function downloadPubKey() {
 }
 
 function encrypt(text) {
+  if (!text) return null;
   RSAEncrypt.setPublicKey(publicKey);
   return RSAEncrypt.encrypt(text);
 }
@@ -83,10 +84,6 @@ function grabWithItext() {
 function validate(url, path, authKey) {
   if (!url) {
     window.alert("Url shouldn't be empty!");
-    return false;
-  }
-  if (!path) {
-    window.alert("Path shouldn't be empty!");
     return false;
   }
   if (!authKey) {

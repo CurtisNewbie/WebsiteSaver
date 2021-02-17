@@ -2,6 +2,7 @@ package com.curtisnewbie.impl;
 
 import com.curtisnewbie.api.HtmlUtil;
 import com.curtisnewbie.api.PdfUtil;
+import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,10 @@ public class HtmlUtilImplTest {
 
     @Test
     void shouldGrabHtmlContent() throws IOException, HtmlContentIncorrectException {
-        String htmlContent = htmlUtil.grabHtmlContent(HTML_CONTENT_URL);
-        Assertions.assertNotNull(htmlContent);
+        Document doc = htmlUtil.grapDoc(HTML_CONTENT_URL);
+        Assertions.assertNotNull(doc);
+        if (doc != null) {
+            System.out.println(doc.toString());
+        }
     }
 }

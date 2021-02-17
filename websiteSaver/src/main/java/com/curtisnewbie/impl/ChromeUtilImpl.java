@@ -1,8 +1,13 @@
 package com.curtisnewbie.impl;
 
 import com.curtisnewbie.api.ChromeUtil;
+import com.curtisnewbie.api.HtmlUtil;
+import com.curtisnewbie.api.PdfUtil;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +16,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.rmi.server.ExportException;
+import java.util.List;
 
 /**
  * @author zhuangyongj
@@ -22,6 +29,9 @@ public class ChromeUtilImpl implements ChromeUtil {
 
     @Value("${rootDir}")
     private String rootDir;
+
+    @Autowired
+    private HtmlUtil htmlUtil;
 
     @PostConstruct
     void init() {
@@ -63,8 +73,17 @@ public class ChromeUtilImpl implements ChromeUtil {
         }
     }
 
+    @Override
+    public void grab2Pdf(final String url) throws IOException, HtmlContentIncorrectException {
+        List<String> titles = htmlUtil.extractTitle(htmlUtil.grapDoc(url));
+        if (titles.isEmpty())
+            throw new IllegalArgumentException("There is no title for this website");
+        grab2Pdf(url, titles.get(0));
+    }
+
     /**
      * Remove all spaces and '.' chars
+     *
      * @throws IllegalArgumentException if the path becomes empty after invalid chars removal
      */
     private String removeInvalidChars(String path) {
