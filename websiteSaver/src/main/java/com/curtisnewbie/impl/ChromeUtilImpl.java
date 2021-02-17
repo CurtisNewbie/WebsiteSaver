@@ -77,7 +77,7 @@ public class ChromeUtilImpl implements ChromeUtil {
     public void grab2Pdf(final String url) throws IOException, HtmlContentIncorrectException {
         List<String> titles = htmlUtil.extractTitle(htmlUtil.grapDoc(url));
         if (titles.isEmpty())
-            throw new IllegalArgumentException("There is no title for this website");
+            throw new IllegalArgumentException("There is no title for this website, '" + url + "'");
         grab2Pdf(url, titles.get(0));
     }
 
