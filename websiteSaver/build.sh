@@ -12,5 +12,5 @@ mvn clean package
 # remove hosted files
 rm -rvf $JAVA_RESOUCES
 
-cp ./**/*.jar .
+find . -name websiteSaver-*.jar -type f -exec cp {} . \;
 
