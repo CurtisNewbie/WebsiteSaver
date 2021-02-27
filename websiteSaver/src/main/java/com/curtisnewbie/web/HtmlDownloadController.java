@@ -101,6 +101,8 @@ public class HtmlDownloadController {
      * @param path
      */
     private void grab2PdfWithChrome(String url, String path) {
+        if (!url.matches("[Hh][Tt][Tt][Pp][Ss]?://"))
+            url = "http://" + url;
         chromeUtil.grab2Pdf(url, path);
     }
 
