@@ -18,6 +18,7 @@ function downloadPubKey() {
   }).then((response) => {
     response.text().then((txt) => {
       publicKey = txt;
+      console.log("pubkey", publicKey);
     });
   });
 }
