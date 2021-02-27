@@ -34,7 +34,8 @@ function grabWithChrome() {
     return;
   }
 
-  let url = document.getElementById("urlInputC").value;
+  let urlEle = document.getElementById("urlInputI");
+  let url = urlEle.value;
   let path = document.getElementById("targetInputC").value;
   let authKey = document.getElementById("authKeyIn").value;
 
@@ -51,19 +52,24 @@ function grabWithChrome() {
   }).then((response) => {
     if (response.status === 200) {
       window.alert("Success!");
+      urlEle.value = null;
     } else {
       window.alert("Failed!");
     }
   });
 }
 
+/**
+ * Deprecated
+ */
 function grabWithItext() {
   if (!hasPubKey()) {
     downloadPubKey();
     return;
   }
 
-  let url = document.getElementById("urlInputI").value;
+  let urlEle = document.getElementById("urlInputI");
+  let url = urlEle.value;
   let path = document.getElementById("targetInputI").value;
   let authKey = document.getElementById("authKeyIn").value;
 
@@ -79,6 +85,7 @@ function grabWithItext() {
     headers: { "Content-type": "application/json; charset=UTF-8" },
   });
   window.alert("Success!");
+  urlEle.value = null;
 }
 
 function validate(url, path, authKey) {
