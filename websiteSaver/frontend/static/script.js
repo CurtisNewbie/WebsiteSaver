@@ -35,7 +35,7 @@ function grabWithChrome() {
     return;
   }
 
-  let urlEle = document.getElementById("urlInputI");
+  let urlEle = document.getElementById("urlInputC");
   let url = urlEle.value;
   let path = document.getElementById("targetInputC").value;
   let authKey = document.getElementById("authKeyIn").value;
