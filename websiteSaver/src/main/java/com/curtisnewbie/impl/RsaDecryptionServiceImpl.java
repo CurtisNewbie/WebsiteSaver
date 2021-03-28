@@ -35,7 +35,11 @@ public class RsaDecryptionServiceImpl implements RsaDecryptionService {
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
             cipher.init(Cipher.DECRYPT_MODE, rsaService.getPrivateKey());
             return new String(cipher.doFinal(data));
-        } catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException e) {
+        } catch (NoSuchAlgorithmException
+                | InvalidKeyException
+                | NoSuchPaddingException
+                | BadPaddingException
+                | IllegalBlockSizeException e) {
             logger.error(e.getMessage());
             throw new DecryptionFailureException(e);
         }

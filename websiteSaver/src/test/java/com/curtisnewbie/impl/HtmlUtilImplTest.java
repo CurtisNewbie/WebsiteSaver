@@ -1,7 +1,6 @@
 package com.curtisnewbie.impl;
 
 import com.curtisnewbie.api.HtmlUtil;
-import com.curtisnewbie.api.PdfUtil;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -23,13 +22,10 @@ public class HtmlUtilImplTest {
     @Autowired
     private HtmlUtil htmlUtil;
 
-    @Autowired
-    private PdfUtil pdfUtil;
-
     @Test
     @Disabled
     void shouldGrabHtmlContent() throws IOException, HtmlContentIncorrectException {
-        Document doc = htmlUtil.grapDoc(HTML_CONTENT_URL);
+        Document doc = htmlUtil.grabDoc(HTML_CONTENT_URL);
         Assertions.assertNotNull(doc);
         if (doc != null) {
             System.out.println(doc.toString());

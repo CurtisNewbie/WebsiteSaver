@@ -2,9 +2,6 @@ package com.curtisnewbie.impl;
 
 import com.curtisnewbie.api.ChromeUtil;
 import com.curtisnewbie.api.HtmlUtil;
-import com.curtisnewbie.api.PdfUtil;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.rmi.server.ExportException;
 import java.util.List;
 
 /**
@@ -75,7 +71,7 @@ public class ChromeUtilImpl implements ChromeUtil {
 
     @Override
     public void grab2Pdf(final String url) throws IOException, HtmlContentIncorrectException {
-        List<String> titles = htmlUtil.extractTitle(htmlUtil.grapDoc(url));
+        List<String> titles = htmlUtil.extractTitle(htmlUtil.grabDoc(url));
         if (titles.isEmpty())
             throw new IllegalArgumentException("There is no title for this website, '" + url + "'");
         grab2Pdf(url, titles.get(0));

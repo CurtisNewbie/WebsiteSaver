@@ -14,14 +14,13 @@ import java.util.Base64;
 @Service
 public class RsaServiceImpl implements RsaService {
     private static final Logger logger = LoggerFactory.getLogger(RsaServiceImpl.class);
-    private static final int KEY_SIZE = 1024;
     private static final String RSA = "RSA";
 
     private final String pubKeyStr;
     private final PublicKey publicKey;
     private final PrivateKey privateKey;
 
-    protected RsaServiceImpl() throws NoSuchAlgorithmException {
+    public RsaServiceImpl() throws NoSuchAlgorithmException {
         // only generate key pair for once
         KeyPairGenerator kpg = KeyPairGenerator.getInstance(RSA);
         KeyPair kp = kpg.generateKeyPair();
@@ -38,10 +37,5 @@ public class RsaServiceImpl implements RsaService {
     @Override
     public PrivateKey getPrivateKey() {
         return privateKey;
-    }
-
-    @Override
-    public PublicKey getPublicKey() {
-        return null;
     }
 }

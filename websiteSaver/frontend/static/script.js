@@ -1,19 +1,16 @@
-const URL_FOR_ITEXT = "/download/with/itext";
-const URL_FOR_CHROME = "/download/with/chrome";
-const URL_FOR_PUB_KEY = "/key/public";
 const RSAEncrypt = new JSEncrypt();
+/** outer div for the list of job  */
+const jobListDiv = document.getElementById("jobListDiv");
+/** public key for RSA encryption */
 let publicKey = null;
-
-// download public key for encryption
-downloadPubKey();
 
 function hasPubKey() {
   if (publicKey) return true;
   else return false;
 }
 
-function downloadPubKey() {
-  fetch(URL_FOR_PUB_KEY, {
+function fetchRsaPubKey() {
+  fetch("/key/public", {
     method: "GET",
   }).then((response) => {
     response.text().then((txt) => {
@@ -24,14 +21,16 @@ function downloadPubKey() {
 }
 
 function encrypt(text) {
-  if (!text) return null;
+  if (!text) {
+    return null;
+  }
   RSAEncrypt.setPublicKey(publicKey);
   return RSAEncrypt.encrypt(text);
 }
 
 function grabWithChrome() {
   if (!hasPubKey()) {
-    downloadPubKey();
+    fetchRsaPubKey();
     return;
   }
 
@@ -40,9 +39,9 @@ function grabWithChrome() {
   let path = document.getElementById("targetInputC").value;
   let authKey = document.getElementById("authKeyIn").value;
 
-  if (!validate(url, path, authKey)) return;
+  if (!validate(url, authKey)) return;
 
-  fetch(URL_FOR_CHROME, {
+  fetch("/download/with/chrome", {
     method: "POST",
     body: JSON.stringify({
       url: encrypt(url),
@@ -60,36 +59,7 @@ function grabWithChrome() {
   });
 }
 
-/**
- * Deprecated
- */
-function grabWithItext() {
-  if (!hasPubKey()) {
-    downloadPubKey();
-    return;
-  }
-
-  let urlEle = document.getElementById("urlInputI");
-  let url = urlEle.value;
-  let path = document.getElementById("targetInputI").value;
-  let authKey = document.getElementById("authKeyIn").value;
-
-  if (!validate(url, path, authKey)) return;
-
-  fetch(URL_FOR_ITEXT, {
-    method: "POST",
-    body: JSON.stringify({
-      url: encrypt(url),
-      path: encrypt(path),
-      authKey: encrypt(Date.now() + "::" + authKey),
-    }),
-    headers: { "Content-type": "application/json; charset=UTF-8" },
-  });
-  window.alert("Success!");
-  urlEle.value = null;
-}
-
-function validate(url, path, authKey) {
+function validate(url, authKey) {
   if (!url) {
     window.alert("Url shouldn't be empty!");
     return false;
@@ -104,3 +74,38 @@ function validate(url, path, authKey) {
   }
   return true;
 }
+
+function fetchJobList() {
+  fetch("/job/list", {
+    method: "GET",
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (!result) {
+        console.error("Error, returned result: ", result);
+        return;
+      }
+
+      const jobInfoList = result;
+      for (let jobInfo of jobInfoList) {
+        let li = document.createElement("li");
+        let innerLink = document.createElement("a");
+        innerLink.textContent = jobInfo;
+        li.appendChild(innerLink);
+        li.classList.add("list-group-item");
+        li.classList.add("list-group-item-action");
+        li.setAttribute("target", "_blank");
+        li.style.wordBreak = "break-all";
+        jobListDiv.appendChild(li);
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+
+// -------------------------------- main -----------------------------------
+
+// download public key for encryption
+fetchRsaPubKey();
+fetchJobList();

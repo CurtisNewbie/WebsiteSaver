@@ -13,7 +13,7 @@ public class ControllerAdviceConfig {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(Exception.class)
-    public void badRequest() {
+    public void badRequest(Exception ignored) {
         // return bad request for all kind of exceptions
     }
 }
