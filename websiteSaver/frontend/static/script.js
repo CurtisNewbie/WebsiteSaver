@@ -104,6 +104,10 @@ function fetchJobList() {
     });
 }
 
+function logout() {
+  window.location = "/logout";
+}
+
 // -------------------------------- main -----------------------------------
 
 // download public key for encryption
