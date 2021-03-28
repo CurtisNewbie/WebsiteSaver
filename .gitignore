@@ -24,3 +24,6 @@ hs_err_pid*
 
 # generated files
 *.pdf
+
+# ssl certificates PKCS#12
+*.p12
