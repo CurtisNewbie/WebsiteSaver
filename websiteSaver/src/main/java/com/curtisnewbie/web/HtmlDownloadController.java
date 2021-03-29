@@ -31,9 +31,6 @@ public class HtmlDownloadController {
     private HtmlUtil htmlUtil;
 
     @Autowired
-    private TaskHandler taskHandler;
-
-    @Autowired
     private ChromeUtil chromeUtil;
 
     @Autowired
@@ -43,13 +40,11 @@ public class HtmlDownloadController {
     private String rootDir;
 
     @PostMapping("/with/chrome")
-    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) {
-        taskHandler.asyncHandle(() -> {
-            if (StringUtils.hasLength(q.getPath()))
-                grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()), rsaDecryptionService.decrypt(q.getPath()));
-            else
-                grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()));
-        }, "grab2PdfWithChrome");
+    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) throws DecryptionFailureException, IOException, HtmlContentIncorrectException {
+        if (StringUtils.hasLength(q.getPath()))
+            grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()), rsaDecryptionService.decrypt(q.getPath()));
+        else
+            grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()));
         return ResponseEntity.ok().build();
     }
 
