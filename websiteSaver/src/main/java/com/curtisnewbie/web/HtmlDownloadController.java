@@ -44,12 +44,6 @@ public class HtmlDownloadController {
 
     @PostMapping("/with/chrome")
     public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) {
-        try {
-            String authKey = rsaDecryptionService.decrypt(q.getAuthKey());
-        } catch (DecryptionFailureException e) {
-            logger.error("Decryption failure", e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
         taskHandler.asyncHandle(() -> {
             if (StringUtils.hasLength(q.getPath()))
                 grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()), rsaDecryptionService.decrypt(q.getPath()));
