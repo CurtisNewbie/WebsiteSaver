@@ -60,9 +60,7 @@ public class HtmlDownloadController {
      * @param path
      */
     private void grab2PdfWithChrome(String url, String path) {
-        if (!HTTP_PROTOCOL_PATTERN.matcher(url).matches())
-            url = "http://" + url;
-        chromeUtil.grab2Pdf(url, path);
+        chromeUtil.grab2Pdf(appendProtocolIfNotExists(url), path);
     }
 
     /**
@@ -71,6 +69,13 @@ public class HtmlDownloadController {
      * @param url
      */
     private void grab2PdfWithChrome(String url) throws IOException, HtmlContentIncorrectException {
-        chromeUtil.grab2Pdf(url);
+        chromeUtil.grab2Pdf(appendProtocolIfNotExists(url));
+    }
+
+    private static String appendProtocolIfNotExists(String url) {
+        if (!HTTP_PROTOCOL_PATTERN.matcher(url).matches())
+            return "http://" + url;
+        else
+            return url;
     }
 }
