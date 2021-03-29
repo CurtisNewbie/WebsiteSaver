@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 /**
@@ -39,14 +40,29 @@ public class HtmlDownloadController {
     private String rootDir;
 
     @PostMapping("/with/chrome")
-    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) throws DecryptionFailureException, IOException,
-            HtmlContentIncorrectException {
+    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) throws DecryptionFailureException {
         if (!StringUtils.hasLength(q.getUrl()))
             return ResponseEntity.badRequest().build();
-        if (StringUtils.hasLength(q.getPath()))
-            grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()), rsaDecryptionService.decrypt(q.getPath()));
-        else
-            grab2PdfWithChrome(rsaDecryptionService.decrypt(q.getUrl()));
+
+        String url = rsaDecryptionService.decrypt(q.getUrl());
+        if (StringUtils.hasLength(q.getPath())) {
+            String path = rsaDecryptionService.decrypt(q.getPath());
+            CompletableFuture.runAsync(() -> {
+                try {
+                    grab2PdfWithChrome(url, path);
+                } catch (IOException e) {
+                    logger.error("Failed to convert webpage to pdf", e);
+                }
+            });
+        } else {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    grab2PdfWithChrome(url);
+                } catch (IOException | HtmlContentIncorrectException e) {
+                    logger.error("Failed to convert webpage to pdf", e);
+                }
+            });
+        }
         return ResponseEntity.ok().build();
     }
 

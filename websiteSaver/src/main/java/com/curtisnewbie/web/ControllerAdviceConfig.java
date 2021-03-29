@@ -18,7 +18,7 @@ public class ControllerAdviceConfig {
     private static final Logger logger = LoggerFactory.getLogger(ControllerAdviceConfig.class);
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({DecryptionFailureException.class, HtmlContentIncorrectException.class})
+    @ExceptionHandler({DecryptionFailureException.class})
     public void badRequest(Exception e) {
         logger.warn("Bad request", e);
     }
