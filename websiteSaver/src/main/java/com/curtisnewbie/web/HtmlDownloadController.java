@@ -1,6 +1,7 @@
 package com.curtisnewbie.web;
 
 import com.curtisnewbie.api.*;
+import com.curtisnewbie.dto.JobInfo;
 import com.curtisnewbie.dto.QueryEntity;
 import com.curtisnewbie.exception.DecryptionFailureException;
 import com.curtisnewbie.exception.HtmlContentIncorrectException;
@@ -13,6 +14,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
@@ -29,12 +31,12 @@ public class HtmlDownloadController {
 
     @Autowired
     private HtmlUtil htmlUtil;
-
     @Autowired
     private ChromeUtil chromeUtil;
-
     @Autowired
     private RsaDecryptionService rsaDecryptionService;
+    @Autowired
+    private JobTracker jobTracker;
 
     @Value("${rootDir}")
     private String rootDir;
@@ -47,23 +49,36 @@ public class HtmlDownloadController {
         String url = rsaDecryptionService.decrypt(q.getUrl());
         if (StringUtils.hasLength(q.getPath())) {
             String path = rsaDecryptionService.decrypt(q.getPath());
-            CompletableFuture.runAsync(() -> {
+            CompletableFuture.supplyAsync(() -> {
+                int jobId = jobTracker.addJobInfo(new JobInfo(url));
                 try {
                     grab2PdfWithChrome(url, path);
                 } catch (IOException e) {
                     logger.error("Failed to convert webpage to pdf", e);
                 }
+                return jobId;
+            }).whenComplete((jobId, e) -> {
+                jobTracker.removeJobInfo(jobId);
             });
         } else {
-            CompletableFuture.runAsync(() -> {
+            CompletableFuture.supplyAsync(() -> {
+                int jobId = jobTracker.addJobInfo(new JobInfo(url));
                 try {
                     grab2PdfWithChrome(url);
                 } catch (IOException | HtmlContentIncorrectException e) {
                     logger.error("Failed to convert webpage to pdf", e);
                 }
+                return jobId;
+            }).whenComplete((jobId, e) -> {
+                jobTracker.removeJobInfo(jobId);
             });
         }
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/job/list")
+    public ResponseEntity<List<JobInfo>> getJobInfoList() {
+        return ResponseEntity.ok(jobTracker.getAllJobs());
     }
 
     /**

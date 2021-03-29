@@ -49,8 +49,8 @@ function grabWithChrome() {
     headers: { "Content-type": "application/json; charset=UTF-8" },
   }).then((response) => {
     if (response.status === 200) {
-      window.alert("Success!");
       urlEle.value = null;
+      fetchJobList();
     } else {
       window.alert("Failed!");
     }
@@ -66,7 +66,8 @@ function validate(url) {
 }
 
 function fetchJobList() {
-  fetch("/job/list", {
+  jobListDiv.innerHTML = "";
+  fetch("/download/job/list", {
     method: "GET",
   })
     .then((response) => response.json())
@@ -80,7 +81,7 @@ function fetchJobList() {
       for (let jobInfo of jobInfoList) {
         let li = document.createElement("li");
         let innerLink = document.createElement("a");
-        innerLink.textContent = jobInfo;
+        innerLink.textContent = jobInfo.name + " " + jobInfo.startTime;
         li.appendChild(innerLink);
         li.classList.add("list-group-item");
         li.classList.add("list-group-item-action");
