@@ -1,3 +1,5 @@
+#!/bin/bash
+
 frontendStatic=frontend/static
 javaStatic=src/main/resources/static
 buildLog="build.log"
@@ -22,9 +24,14 @@ cp -rv ${frontendStatic}/* $javaStatic >> $buildLog
 echo "Executing maven clean package"
 mvn clean package >> $buildLog
 
+if [ ! $? -eq 0 ]; then
+    echo "Maven build failed, see '$buildLog' for more information"
+    exit 1;
+fi
+
 # remove hosted files
 echo "Removing frontend files from 'static' folder"
-rm -rf $javaStatic/* >> $buildLog
+rm -r $javaStatic/* >> $buildLog
 
 find target/ -name ${jarName} -type f -exec cp {} . \;
 
