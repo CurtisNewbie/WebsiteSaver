@@ -17,6 +17,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author zhuangyongj
@@ -24,13 +25,8 @@ import java.util.List;
 @Component
 public class HtmlUtilImpl implements HtmlUtil {
 
-    private static final String HTML_TEXT_TYPE_PAT = "^.*text\\s*/\\s*html.*$";
+    private static final Pattern HTML_TEXT_TYPE_PAT = Pattern.compile("^.*text\\s*/\\s*html.*$");
     private static final Logger logger = LoggerFactory.getLogger(HtmlUtilImpl.class);
-    private static final String LINK_TAG = "link";
-    private static final String BASE_TAG = "base";
-    private static final String HREF_ATTR = "href";
-    private static final String REL_ATTR = "rel";
-    private static final String REL_NAME = "stylesheet";
     private static final String TITLE_TAG = "title";
 
     @Value("${conn.timeout}")
@@ -44,9 +40,8 @@ public class HtmlUtilImpl implements HtmlUtil {
             urlConn = (HttpURLConnection) new URL(url).openConnection();
             urlConn.setConnectTimeout(TIMEOUT);
             urlConn.connect();
-            if (!urlConn.getContentType().matches(HTML_TEXT_TYPE_PAT)) {
-                logger.error(">>> Error. Incorrect HTTP URL Content: {}", urlConn.getContentType());
-                throw new HtmlContentIncorrectException(urlConn.getContentType());
+            if (!HTML_TEXT_TYPE_PAT.matcher(urlConn.getContentType()).matches()) {
+                throw new HtmlContentIncorrectException("Incorrect HTTP URL Content: " + urlConn.getContentType());
             }
             try (BufferedInputStream bufferedIn = new BufferedInputStream(urlConn.getInputStream())) {
                 byte[] bytes = bufferedIn.readAllBytes();
