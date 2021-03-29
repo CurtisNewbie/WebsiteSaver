@@ -37,16 +37,14 @@ function grabWithChrome() {
   let urlEle = document.getElementById("urlInputC");
   let url = urlEle.value;
   let path = document.getElementById("targetInputC").value;
-  let authKey = document.getElementById("authKeyIn").value;
 
-  if (!validate(url, authKey)) return;
+  if (!validate(url)) return;
 
   fetch("/download/with/chrome", {
     method: "POST",
     body: JSON.stringify({
       url: encrypt(url),
       path: encrypt(path),
-      authKey: encrypt(Date.now() + "::" + authKey),
     }),
     headers: { "Content-type": "application/json; charset=UTF-8" },
   }).then((response) => {
@@ -59,17 +57,9 @@ function grabWithChrome() {
   });
 }
 
-function validate(url, authKey) {
+function validate(url) {
   if (!url) {
     window.alert("Url shouldn't be empty!");
-    return false;
-  }
-  if (!authKey) {
-    window.alert("Enter your password first!");
-    return false;
-  }
-  if (authKey.indexOf(":") > 0) {
-    window.alert("Password doesn't allow ':' !");
     return false;
   }
   return true;
