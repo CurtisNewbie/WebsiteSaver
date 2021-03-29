@@ -81,7 +81,10 @@ function fetchJobList() {
       for (let jobInfo of jobInfoList) {
         let li = document.createElement("li");
         let innerLink = document.createElement("a");
-        innerLink.textContent = jobInfo.name + " " + jobInfo.startTime;
+        var date = new Date(jobInfo.startTime);
+        innerLink.textContent = `'${
+          jobInfo.name
+        }' - started at ${date.getHours()}:${date.getMinutes()}`;
         li.appendChild(innerLink);
         li.classList.add("list-group-item");
         li.classList.add("list-group-item-action");
