@@ -1,4 +1,5 @@
-package com.curtisnewbie.impl;
+package com.curtisnewbie.exception;
+
 
 /**
  * Content of the http url isn't text/html

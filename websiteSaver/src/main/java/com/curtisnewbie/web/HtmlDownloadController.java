@@ -3,7 +3,7 @@ package com.curtisnewbie.web;
 import com.curtisnewbie.api.*;
 import com.curtisnewbie.dto.QueryEntity;
 import com.curtisnewbie.exception.DecryptionFailureException;
-import com.curtisnewbie.impl.HtmlContentIncorrectException;
+import com.curtisnewbie.exception.HtmlContentIncorrectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,8 @@ public class HtmlDownloadController {
     private String rootDir;
 
     @PostMapping("/with/chrome")
-    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) throws DecryptionFailureException, IOException, HtmlContentIncorrectException {
+    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) throws DecryptionFailureException, IOException,
+            HtmlContentIncorrectException {
         if (!StringUtils.hasLength(q.getUrl()))
             return ResponseEntity.badRequest().build();
         if (StringUtils.hasLength(q.getPath()))
@@ -55,7 +56,7 @@ public class HtmlDownloadController {
      * @param url
      * @param path
      */
-    private void grab2PdfWithChrome(String url, String path) {
+    private void grab2PdfWithChrome(String url, String path) throws IOException {
         chromeUtil.grab2Pdf(appendProtocolIfNotExists(url), path);
     }
 

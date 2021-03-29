@@ -1,6 +1,7 @@
 package com.curtisnewbie.api;
 
-import com.curtisnewbie.impl.HtmlContentIncorrectException;
+import com.curtisnewbie.exception.DecryptionFailureException;
+import com.curtisnewbie.exception.HtmlContentIncorrectException;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ public interface HtmlUtil {
      * @param url website url
      * @return html model
      */
-    Document grabDoc(String url) throws IOException, HtmlContentIncorrectException;
+    Document fetchDocument(String url) throws IOException, HtmlContentIncorrectException;
 
     /**
      * Extract title

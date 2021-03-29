@@ -1,6 +1,7 @@
 package com.curtisnewbie.api;
 
-import com.curtisnewbie.impl.HtmlContentIncorrectException;
+import com.curtisnewbie.exception.DecryptionFailureException;
+import com.curtisnewbie.exception.HtmlContentIncorrectException;
 
 import java.io.IOException;
 
@@ -19,12 +20,12 @@ public interface ChromeUtil {
      * @param url  of web page
      * @param path filename / path
      */
-    void grab2Pdf(String url, String path);
+    void grab2Pdf(String url, String path) throws IOException;
 
     /**
      * Grab webpage and convert it to PDF file with the support of chrome (headless mode in CLI)
      *
-     * @param url  of web page
+     * @param url of web page
      */
     void grab2Pdf(String url) throws IOException, HtmlContentIncorrectException;
 }
