@@ -46,7 +46,7 @@ public class AuthProvider implements AuthenticationProvider {
                     authentication.getCredentials(),
                     Arrays.asList(new SimpleGrantedAuthority("ADMIN")));
         }
-        throw new BadCredentialsException("User '" + username + "' not authenticated due to bad credential");
+        throw new BadCredentialsException("Incorrect username or password");
     }
 
     @Override
