@@ -3,7 +3,7 @@ package com.curtisnewbie.dto;
 /**
  * @author zhuangyongj
  */
-public class QueryEntity {
+public class QueryDto {
     private String url;
     private String path;
 

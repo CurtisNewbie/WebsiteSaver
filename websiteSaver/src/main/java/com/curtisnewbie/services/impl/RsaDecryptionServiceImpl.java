@@ -1,7 +1,7 @@
-package com.curtisnewbie.impl;
+package com.curtisnewbie.services.impl;
 
-import com.curtisnewbie.api.RsaDecryptionService;
-import com.curtisnewbie.api.RsaService;
+import com.curtisnewbie.services.api.RsaDecryptionService;
+import com.curtisnewbie.services.api.RsaService;
 import com.curtisnewbie.exception.DecryptionFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

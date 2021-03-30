@@ -1,7 +1,7 @@
-package com.curtisnewbie.impl;
+package com.curtisnewbie.services.impl;
 
-import com.curtisnewbie.api.ChromeUtil;
-import com.curtisnewbie.api.HtmlUtil;
+import com.curtisnewbie.services.api.ChromeUtil;
+import com.curtisnewbie.services.api.HtmlUtil;
 import com.curtisnewbie.exception.HtmlContentIncorrectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

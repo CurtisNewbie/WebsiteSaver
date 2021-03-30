@@ -1,6 +1,6 @@
-package com.curtisnewbie.impl;
+package com.curtisnewbie.services.impl;
 
-import com.curtisnewbie.api.HtmlUtil;
+import com.curtisnewbie.services.api.HtmlUtil;
 import com.curtisnewbie.exception.HtmlContentIncorrectException;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Assertions;

@@ -1,6 +1,6 @@
 package com.curtisnewbie.web;
 
-import com.curtisnewbie.api.RsaService;
+import com.curtisnewbie.services.api.RsaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

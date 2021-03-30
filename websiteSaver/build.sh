@@ -26,6 +26,8 @@ mvn clean package >> $buildLog
 
 if [ ! $? -eq 0 ]; then
     echo "Maven build failed, see '$buildLog' for more information"
+    echo "Removing frontend files from 'static' folder"
+    rm -r $javaStatic/* >> $buildLog
     exit 1;
 fi
 

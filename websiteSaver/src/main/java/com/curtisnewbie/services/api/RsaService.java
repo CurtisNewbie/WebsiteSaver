@@ -1,4 +1,4 @@
-package com.curtisnewbie.api;
+package com.curtisnewbie.services.api;
 
 import java.security.PrivateKey;
 

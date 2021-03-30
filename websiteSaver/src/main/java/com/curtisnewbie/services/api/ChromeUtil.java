@@ -1,6 +1,5 @@
-package com.curtisnewbie.api;
+package com.curtisnewbie.services.api;
 
-import com.curtisnewbie.exception.DecryptionFailureException;
 import com.curtisnewbie.exception.HtmlContentIncorrectException;
 
 import java.io.IOException;

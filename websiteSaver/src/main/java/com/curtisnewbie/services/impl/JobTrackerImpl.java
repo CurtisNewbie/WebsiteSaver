@@ -1,7 +1,7 @@
-package com.curtisnewbie.impl;
+package com.curtisnewbie.services.impl;
 
-import com.curtisnewbie.api.JobTracker;
 import com.curtisnewbie.dto.JobInfo;
+import com.curtisnewbie.services.api.JobTracker;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;

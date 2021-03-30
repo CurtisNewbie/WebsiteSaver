@@ -1,8 +1,8 @@
 package com.curtisnewbie.web;
 
-import com.curtisnewbie.api.*;
+import com.curtisnewbie.services.api.*;
 import com.curtisnewbie.dto.JobInfo;
-import com.curtisnewbie.dto.QueryEntity;
+import com.curtisnewbie.dto.QueryDto;
 import com.curtisnewbie.exception.DecryptionFailureException;
 import com.curtisnewbie.exception.HtmlContentIncorrectException;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class HtmlDownloadController {
     private String rootDir;
 
     @PostMapping("/with/chrome")
-    public ResponseEntity convertWithChrome(@RequestBody QueryEntity q) throws DecryptionFailureException {
+    public ResponseEntity convertWithChrome(@RequestBody QueryDto q) throws DecryptionFailureException {
         if (!StringUtils.hasLength(q.getUrl()))
             return ResponseEntity.badRequest().build();
 
